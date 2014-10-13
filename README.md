@@ -5,6 +5,6 @@ Trabajo para la asignatura de Fundamentos de Redes del doble Grado Matemáticas-
 
 **Índice**
 
-1.
-2.
-3.
+1. .
+2. .
+3. .
