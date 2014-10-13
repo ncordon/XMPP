@@ -15,3 +15,5 @@ Trabajo para la asignatura de Fundamentos de Redes del doble Grado Matemáticas-
 3.1 XMPP y HTTP.  
 4. Whatsapp y FunXMPP.  
 4.1 Diferencias entre XMPP y FunXMPP. 
+4.1.2 SASL  
+4.2 Encriptación WAUTH-1 y WAUTH-2
