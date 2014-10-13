@@ -8,12 +8,12 @@ Trabajo para la asignatura de Fundamentos de Redes del doble Grado Matemáticas-
 1. Introducción al XMPP.  
 1.1. Ventajas.  
 1.2. Desventajas. 
-2. Estructura del XMPP: cliente-servidor. 
-2.1. Jabber ID. 
+2. Estructura del XMPP: cliente-servidor.   
+2.1. Jabber ID.   
 2.2. Proceso de entrega de mensajes.  
 3. Conexión a otros protocolos, pasarelas.    
 3.1 XMPP y HTTP.  
 4. Whatsapp y FunXMPP.  
-4.1 Diferencias entre XMPP y FunXMPP. 
-4.1.2 SASL  
-4.2 Encriptación WAUTH-1 y WAUTH-2
+4.1 Diferencias entre XMPP y FunXMPP.   
+4.2 SASL.   
+4.3 Encriptación WAUTH-1 y WAUTH-2.   
