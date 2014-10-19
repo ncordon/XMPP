@@ -238,41 +238,44 @@ El protocolo XMPP} % Subtitle
    
    \subsection{Ventajas}
    \begin{itemize}
-     \item \textbf{Descentralización}
+     \item \textbf{Descentralización}\\
      La arquitectura de la red XMPP es similar a la de la red email. Cualquiera puede tener su propio servidor XMPP, y
      no existe servidor central
-     \item \textbf{Estándar abierto}
-     La IETF ha formalizado en los RFCS 6120 y 6121 XMP como un protocolo de mensajería instantánea para el que no es
-     ninguna clase de privilegio para implementar soporte de estas especificaciones, y su desarrollo no está ligado
-     a un único proyecto.
-     \item \textbf{Seguridad}
+     \item \textbf{Estándar abierto}\\
+     La IETF ha formalizado en los RFCS 6120 y 6121 XMPP como un protocolo de mensajería instantánea para el que no es
+     necesaria ninguna clase de privilegio para implementar soporte de sus especificaciones. Además su desarrollo no está ligado
+     a una única compañía.
+     \item \textbf{Seguridad}\\
      Se trata de un protocolo evolucionado y mejorado desde que se creó en 1999. Los servidores XMPP pueden ser aislados
-     de la red pública XMPP y los núcleos de las especificaciones XMPP proveen de una alta seguridad a través de SASL y TLS.
+     de la red pública XMPP y los núcleos de las especificaciones XMPP son capaces de proporcionar una alta seguridad
+     a través de SASL y TLS.
      
      Cabe destacar que existen múltiples implementaciones del estándar para clientes, servidores, y librerías de código.
-     \item \textbf{Flexibilidad}
+     \item \textbf{Flexibilidad}\\
      Las aplicaciones XMPP, más allá de la mensajería instantánea, incluyen funcionalidades como, entre otras: chat de grupo, 
      herramientas colaborativas, compartición de archivos, control de sistemas remotos, geolocalización, VoIP, \ldots
    \end{itemize}
  
    \subsection{Desventajas}
    \begin{itemize}
-    \item \textbf{Carece de soporte QoS (Quality of service)}
+    \item \textbf{Carece de soporte QoS (Quality of service)}\\
     La garantía de entrega de mensajes debe construirse por encima de la capa XMPP
     % ? Normally, this is done using simple sequence number attributes in stanzas.
-    \item \textbf{Redundancia}
-    Alreddor del 70\% del tráfico entre servidores son datos de presencia, siendo el 60\% de estos transmisiones 
+    \item \textbf{Redundancia}\\
+    Alrededor del 70\% del tráfico entre servidores son datos de presencia, siendo el 60\% de estos transmisiones 
     redundantes.
-    \item \textbf{Escalabilidad}
+    \item \textbf{Escalabilidad}\\
     XMPP adolece del mismo problema de redundancia en sus servicios de chatroom y suscripción. Actualmente se está
     trabajando en su solución.
-    \item \textbf{Ausencia de datos binarios}
-    Al estar basado en XML (comunicación basada en texto), la sobrecarga de la red es mayor en comparación 
+    \item \textbf{Ausencia de datos binarios}\\
+    Al estar basado en XML (transmisión de datos vía texto), la sobrecarga de la red es mayor en comparación 
     con otros protocolos binarios. Este problema ha sido atajado por el \textit{Efficient XML Interchange (EXI) Format},
-    en el que XML es fragmentado eficientemente de forma binaria.
+    en el que XML es fragmentado de forma binaria.
+    
     Ahora bien, como los datos binarios deben ser codificados en base64 antes de transmitirse de manera in-band,
     cualquier cantidad considerable de datos binarios (transferencia de archivos) debe ser transmitida out-of-band,
-    empleando mensajes in-band para coordinarla. El mejor ejemplo de esto es Jingle, un protocolo de extensión de XMPP.
+    empleando mensajes in-band para coordinarla. El mejor ejemplo de esto es Jingle, un protocolo de extensión de XMPP
+    que añade control de sesiones P2P para VoIP o comunicaciones de videoconferencia.
     
    \end{itemize}
 
@@ -281,6 +284,23 @@ El protocolo XMPP} % Subtitle
   XMPP sigue una estructura cliente/servidor. El cliente y el servidor se comunican a través 
   de una conexión TCP en el puerto 5222. Y la información que se envía sobre XMPP va contenida
   en un streaming de objetos XML.
+  
+  \subsection{Jabber ID}
+  Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
+  consta de usuario y dirección DNS (o en su defecto, dirección IP) del servidor donde el usuario reside, de la forma:
+  \texttt{username@example.com}. Así se evita tener que mantener un servidor central con la lista de IDs.
+  
+  Para posibilitar la conexión de los usuarios desde varios clientes, los JID incluyen una cadena al final, separada
+  del ID por una barra /, y conocida como recurso (home, mobile,\ldots). Además, cada recurso puede
+  tener asignada una prioridad numérica de manera que \texttt{username@example.com} tenga por ejemplo mayor prioridad que 
+  \texttt{username@example.com/mobile} y los mensajes enviados al primer JID se entreguen a todos los clientes,
+  pero los enviados al segundo JID se entreguen sólo al cliente móvil. Mayor prioridad se refleja en un número más alto.
+  
+  Asimismo, los JIDs sin la parte del nombre de usuario son también válidos, y pueden ser empleados para mensajes del
+  sistema y control de ciertos aspectos en el servidor. Estos JIDs también pueden incluir la parte del recurso.
+  
+  %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
+  % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
   
   \subsection{Proceso de entrega de mensajes}
     \subsubsection{Inicio de la sesión}
@@ -355,7 +375,7 @@ El protocolo XMPP} % Subtitle
   \url{http://xmpp.org/2007/10/what-is-xmpp/}.
   
 \bibitem{xmppWiki}
-  XMPP Wikipedia
+  XMPP Wikipedia.\\
   \url{http://en.wikipedia.org/wiki/XMPP}
 \end{thebibliography}  
   
