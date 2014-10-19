@@ -302,7 +302,11 @@ El protocolo XMPP} % Subtitle
   %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
   % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
   
-  \subsection{Comunicación cliente-servidor}
+  \subsection{Proceso de entrega de mensajes}
+    La comunicación puede efectuarse entre un cliente y un servidor o  bien puede tratarse de un proceso servidor-servidor.
+    La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
+    donde el servidor que solicita comunicación desempeñaría el rol de cliente:
+  
     \subsubsection{Inicio de la sesión}
       La sesión se inicia con la etiqueta \texttt{<stream>} y se finalizará con la etiqueta
       \texttt{</stream>}. Por razones de seguridad, a la apertura de la comunicación le sigue
@@ -369,7 +373,6 @@ El protocolo XMPP} % Subtitle
 <failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
     \end{lstlisting}
 
-  
 \section{Conexión a otros protocolos. Pasarelas}
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
@@ -389,6 +392,10 @@ El protocolo XMPP} % Subtitle
 \bibitem{xmppWiki}
   XMPP Wikipedia.\\
   \url{http://en.wikipedia.org/wiki/XMPP}
+  
+\bibitem{xmppRFC}
+  RFC 3920
+  \url{http://tools.ietf.org/html/rfc3920}
 \end{thebibliography}  
   
 \end{document}
