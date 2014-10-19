@@ -302,12 +302,78 @@ El protocolo XMPP} % Subtitle
   %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
   % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
   
+  \subsection{Tipo de mensajes}
+    En los mensajes se puede incluir, aunque no es obligatorio, un atributo que indique el tipo, con objetivo de poder
+    presentar las comunicaciones de forma más amigable al usuario, por ejemplo, en un GUI. Si se incluye dicho tipo, debe
+    tener uno de los siguientes valores:
+    \begin{itemize}
+     \item \texttt{chat} El mensaje está enviado en un contexto de conversación uno a uno.
+     \item \texttt{error} Un error ha ocurrido en relación a un mensaje previo enviado por el sender.
+     \item \texttt{groupchat} Mensaje enviado en el contexto de una conversación multiusuario.
+     \item \texttt{headline} El mensaje está generado por un servicio automático que entrega contenido RSS, noticias, 
+     deportes, \ldots. No se espera respuesta por parte del receptor.
+     \item \texttt{normal} Mensaje enviado en un contexto distinto a conversación uno a uno o multiusuario, que espera
+     respuesta por parte del receptor.
+    \end{itemize}
+    Una aplicación IM debería poder soportar todos estos tipos de mensajes. Si la aplicación recibe un mensaje sin tipificar,
+    debe considerar por defecto el tipo \texttt{normal}  
+  
+  \subsection{Elementos de un mensaje}
+    Los mensajes pueden contener elementos como:
+    \begin{enumerate}
+     \item \texttt{<subject/>}\\
+     Contiene caracteres XML human-readable. Especifica el tópico del mensaje. No debe contener atributos, con excepción
+     del \texttt{xml:lang}
+     \item \texttt{<body/>}
+     Contiene XML human-readable. Especifica el contenido del mensaje. No debe contener atributos, con excepción
+     del \texttt{xml:lang}
+     \item \texttt{<thread/>}
+     Contiene XML no human-readable, indicando un identificador para rastrear un thread de conversación (una sesión de
+     mensajería instantánea) entre dos entidades. Su valor es generado por el emisor, y debe ser incluido en todas 
+     las respuestas. Si se usa, debe ser único a lo largo de una conversación.
+    \end{enumerate}
+
+  \subsection{Presencia}
+    Se usan, ya sea por \texttt{jabber:client} o \texttt{jabber:server} para expresar la disponibilidad en red en un
+    determinado momento de una entidad. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
+    \begin{itemize}
+     \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación
+     \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario %???????
+     \item \texttt{subscribed} El emisor ha permitido al receptor recibir su presencia.
+     \item \texttt{unsubscribe} El emisor se está desvinculando de la presencia de una entidad.
+     \item \texttt{unsubscribed} La petición de suscripción ha sido rachazada o se ha cancelado una suscripción
+     \item \texttt{probe} Petición de la presencia de una entidad
+     \item \texttt{error} Relacionado con el proceso de envio de una presencia
+    \end{itemize}
+    
+    Además,la presencia puede incluir los elementos:
+    \begin{enumerate}
+     \item \texttt{<show/>}\\
+     A su vez, puede tomar los valores:
+     \begin{itemize}
+      \item \texttt{away} 
+      \item \texttt{chat} La entidad está activa
+      \item \texttt{dnd} (Do not disturb)
+      \item \texttt{xa} (Extended away) La entidad se encuentra ausente por un gran periodo de tiempo.
+     \end{itemize}
+     \item \texttt{<status/>}
+     Contiene XML human-readable, especificando disponibilidad, y se usa para complementar el valor de \texttt{<show/>}.
+     Por ejemplo: En una reunión.
+     \item \texttt{<priority/>}
+     Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
+     de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
+    \end{enumerate}
+    
+
   \subsection{Proceso de entrega de mensajes}
+    La mayoría de ls aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
+    establezca
+    
     La comunicación puede efectuarse entre un cliente y un servidor o  bien puede tratarse de un proceso servidor-servidor.
     La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
     donde el servidor que solicita comunicación desempeñaría el rol de cliente:
   
-    \subsubsection{Inicio de la sesión}
+    \subsubsection{Solicitud de inicio de la sesión}
       La sesión se inicia con la etiqueta \texttt{<stream>} y se finalizará con la etiqueta
       \texttt{</stream>}. Por razones de seguridad, a la apertura de la comunicación le sigue
       negociación por TLS y SASL. Después de la negociación, se abre un nuevo canal de comunicación
@@ -331,7 +397,9 @@ El protocolo XMPP} % Subtitle
 	  version='1.0'>
       \end{lstlisting}    
       Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
-      enviará un paquete con los requisitos para la negociación TLS o SASL.
+      enviará un paquete con los requisitos para la negociación TLS o SASL. Si nos encontraramos en un caso de 
+      comunicación servidor servidor, la línea \texttt{xmlns='jabber:client'} se vería sustituida por 
+      \texttt{xmlns='jabber:server'}, y estos son los dos únicos valores posibles que puede tomar dicho campo.
       \begin{lstlisting}[language=XML]
 <stream:features> 
   <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>    
@@ -372,7 +440,9 @@ El protocolo XMPP} % Subtitle
 <!-- Error -->
 <failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
     \end{lstlisting}
-
+    
+  \subsection{Inicio de sesión}
+  La mayoría de las aplicaciones XMPP están basadas en una arquitectura cliente-servidor que requiere que un cliente
 \section{Conexión a otros protocolos. Pasarelas}
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
