@@ -224,8 +224,10 @@ El protocolo XMPP} % Subtitle
   El protocolo XMPP (Extensible Messaging and Presence Protocol) se usa para la mensajería
   instantánea, así como para las llamadas de voz y vídeo. El desarrollo del protocolo fue
   iniciado por \textbf{Jeremie Miller} en el 1998, continuado por la comunidad de código abierto Jabber, que dio
-  nombre al proyecto, y finalmente formalizado en 2002 por la IETF.
-  
+  nombre al proyecto, y finalmente formalizado en 2002 por la IETF.\\
+  \begin{wrapfigure}{r}{4cm}
+  \includegraphics[width=4cm]{logo.png}
+  \end{wrapfigure}
   En 2004 se publicaron los RFCs del protocolo (RFC 3920, RFC 3921, RFC 3922, RFC 3923). Han vuelto a ser actualizados en 2011, y, aunque
   la base del protocolo continúa estable, la \textbf{XMPP Standards Foundation} sigue definiendo extensiones
   al protocolo.
@@ -283,7 +285,8 @@ El protocolo XMPP} % Subtitle
 \section{Estructura del XMPP}
   XMPP sigue una estructura cliente/servidor. El cliente y el servidor se comunican a través 
   de una conexión, normalmente TCP, en el puerto 5222. Y la información que se envía sobre XMPP va contenida
-  en un streaming de objetos XML.
+  en un streaming de objetos XML. Cuando la comunicación es servidor-servidor la conexión se realiza típicamente 
+  a través del puerto 5269, mediante protocolo TCP.
  
   \subsection{Jabber ID}
   Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
@@ -451,7 +454,7 @@ El protocolo XMPP} % Subtitle
 <failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
     \end{lstlisting}
     
-  \subsection{Inicio de sesión}
+  \subsubsection{Inicio de sesión}
     Si el servidor soporta sesiones, debe incluir un elemento \texttt{<session/>}, que advierte al cliente del 
     correcto establecimiento de sesión.
     
@@ -509,6 +512,7 @@ El protocolo XMPP} % Subtitle
     Dependiendo de la implementación del servidor si el usuario ya tenía iniciada sesión, cancelará la sesión antearior
     y concederá nueva sesión (primera alternativa de las listadas a continuación), o informará simplemente de que ya
     dispone de una sesión, y mantendrá ésta, en lugar de conceder la nueva.
+    
 \begin{lstlisting}[language=XML]
 <stream:error>
   <conflict xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>
@@ -523,7 +527,60 @@ El protocolo XMPP} % Subtitle
   </error>
 </iq>
 \end{lstlisting}
-    
+
+    \subsubsection{Intercambio de mensajes}
+      Si un mensaje es enviado en respuesta a un mensaje previamente recibido de una dirección de la forma 
+      \texttt{user@domain/resource}, el valor de \texttt{to} debería ser de la forma \texttt{<user@domain/resource>}. Si el
+      mensaje está enviado fuera del contexto de una sesión de chat, o el emisor tiene constancia que el receptor ya no
+      está disponible, debe dirigir el mensaje a \texttt{<user@domain>}
+      
+      Ejemplo de mensaje con \texttt{subject}:
+\begin{lstlisting}[language=XML]  
+<message
+    to='romeo@example.net'
+    from='juliet@example.com/balcony'
+    type='chat'
+    xml:lang='en'>
+  <subject>I implore you!</subject>
+  <subject
+      xml:lang='cz'>&#x00DA;p&#x011B;nliv&#x011B; prosim!</subject>
+  <body>Wherefore art thou, Romeo?</body>
+  <body xml:lang='cz'>Pro&#x010D;e&#x017D; jsi ty, Romeo?</body>
+</message> 
+\end{lstlisting}
+  
+      Ejemplo de thread de conversación:
+\begin{lstlisting}[language=XML]        
+<message
+    to='romeo@example.net/orchard'
+    from='juliet@example.com/balcony'
+    type='chat'
+    xml:lang='en'>
+  <body>Art thou not Romeo, and a Montague?</body>
+  <thread>e0ffe42b28561960c6b12b944a092794b9683a38</thread>
+</message>
+
+<message
+    to='juliet@example.com/balcony'
+    from='romeo@example.net/orchard'
+    type='chat'
+    xml:lang='en'>
+  <body>Neither, fair saint, if either thee dislike.</body>
+  <thread>e0ffe42b28561960c6b12b944a092794b9683a38</thread>
+</message>
+
+<message
+    to='romeo@example.net/orchard'
+    from='juliet@example.com/balcony'
+    type='chat'
+    xml:lang='en'>
+  <body>How cam'st thou hither, tell me, and wherefore?</body>
+  <thread>e0ffe42b28561960c6b12b944a092794b9683a38</thread>
+</message>
+
+\end{lstlisting}
+
+      
 \section{Conexión a otros protocolos. Pasarelas}
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
@@ -544,9 +601,13 @@ El protocolo XMPP} % Subtitle
   XMPP Wikipedia.\\
   \url{http://en.wikipedia.org/wiki/XMPP}
   
-\bibitem{xmppRFC}
-  RFC 3920
+\bibitem{xmpp3920}
+  RFC 3920.\\
   \url{http://tools.ietf.org/html/rfc3920}
+  
+\bibitem{xmpp3921}
+  RFC 3921.\\
+  \url{http://xmpp.org/rfcs/rfc3921.html}
 \end{thebibliography}  
   
 \end{document}
