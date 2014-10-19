@@ -98,16 +98,50 @@
 \newtheorem{theorem}{Teorema}
 \everymath{\displaystyle} % Displaystyle por defecto
 
-% Listings para el código.
-\usepackage{listings}
+
 \usepackage[usenames,dvipsnames]{xcolor}
 \definecolor{dkgreen}{rgb}{0,0.35,0}
+\definecolor{darkgreen}{rgb}{0,0.35,0}
 \definecolor{dkviolet}{rgb}{0.3,0,0.5}
 \definecolor{dkred}{rgb}{0.5,0,0}
 \definecolor{dkblue}{rgb}{0, 0, 0.9}
+\definecolor{darkblue}{rgb}{0, 0, 0.9}
 \definecolor{ltblue}{rgb}{0.38, 0.55, 0.8}
+\definecolor{maroon}{rgb}{0.5, 0.0, 0.0}
 \usepackage{catchfilebetweentags}
 \usepackage{verbatim}
+
+% Listings para el código.
+\usepackage{listings}
+\usepackage{courier}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{frame=tb,aboveskip=3mm,belowskip=3mm,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{lgray},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=3}
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily,
+  morestring=[s]{"}{"},
+  morecomment=[s]{?}{?},
+  morecomment=[s]{!--}{--},
+  commentstyle=\color{darkgreen},
+  moredelim=[s][\color{black}]{>}{<},
+  moredelim=[s][\color{red}]{\ }{=},
+  stringstyle=\color{blue},
+  identifierstyle=\color{maroon}
+}
+
 
 \usepackage[hidelinks]{hyperref}
 
@@ -215,6 +249,54 @@ El protocolo XMPP} % Subtitle
       negociación por TLS y SASL. Después de la negociación, se abre un nuevo canal de comunicación
       más seguro.
       
+      Más detalladamente, para requerir un nuevo inicio de sesión, el cliente envía un paquete para la apertura:
+      \begin{lstlisting}[language=XML] 
+<stream:stream to='example.com' 
+	  xmlns='jabber:client'
+	  xmlns:stream='http://etherx.jabber.org/streams'
+	  version='1.0'>
+      \end{lstlisting}
+      Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
+      devolverá entonces un paquete con los requisitos para la negociación TLS o SASL.
+      \begin{lstlisting}[language=XML]
+<stream:features> 
+  <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>    
+    <required/>  
+  </starttls>  
+  <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>    
+    <mechanism>DIGEST-MD5</mechanism>    
+    <mechanism>PLAIN</mechanism>   
+    <mechanism>EXTERNAL</mechanism>  
+  </mechanisms> 
+</stream:features>
+      \end{lstlisting}
+
+  \subsubsection{Encriptación y autorización}
+    Si el servidor necesita una negociación TLS, el cliente enviará un \texttt{STARTTLS} al servidor:
+    \begin{lstlisting}[language=XML]
+<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>    
+    \end{lstlisting}
+    A lo que el servidor responderá en función de si el TLS está permitido o si causa error:
+    \begin{lstlisting}[language=XML]
+<!-- Aceptado -->
+<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
+<!-- Error -->
+<failure xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
+    \end{lstlisting}
+    Cuando es procesada la solicitud TLS, el cliente solicitará una nueva sesión, a la que el servidor
+    responderá con la necesidad de una negociación SASL.
+
+    Para la negociación SASL, el cliente debe elegir un método de autenticación entre los disponibles
+    (DIGEST-MD5, PLAIN y EXTERNAL). En el caso de autorización más simple (PLAIN), se envía una cadena
+    codificada como "\texttt{$\backslash$0User$\backslash$0Pass}". El servidor responderá a esto en 
+    función de si acepta o no la petición:
+    \begin{lstlisting}[language=XML]
+<!-- Aceptado -->
+<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+<!-- Error -->
+<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+    \end{lstlisting}
+
   
 \section{Conexión a otros protocolos. Pasarelas}
   \subsection{Protocolos base de XMPP}
