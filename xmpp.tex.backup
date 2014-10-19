@@ -225,21 +225,6 @@ El protocolo XMPP} % Subtitle
    \begin{itemize}
     \item \textbf{Carece de soporte QoS (Quality of service)}
     La garantía de entrega de mensajes debe construirse por encima de la capa XMPP
-    % ? Normally, this is done using simple sequence number attributes in stanzas.
-    \item \textbf{Redundancia}
-    Alreddor del 70\% del tráfico entre servidores son datos de presencia, siendo el 60\% de estos transmisiones 
-    redundantes.
-    \item \textbf{Escalabilidad}
-    XMPP adolece del mismo problema de redundancia en sus servicios de chatroom y suscripción. Actualmente se está
-    trabajando en su solución.
-    \item \textbf{Ausencia de datos binarios}
-    Al estar basado en XML (comunicación basada en texto), la sobrecarga de la red es mayor en comparación 
-    con otros protocolos binarios. Este problema ha sido atajado por el \textit{Efficient XML Interchange (EXI) Format},
-    en el que XML es fragmentado eficientemente de forma binaria.
-    Ahora bien, como los datos binarios deben ser codificados en base64 antes de transmitirse de manera in-band,
-    cualquier cantidad considerable de datos binarios (transferencia de archivos) debe ser transmitida out-of-band,
-    empleando mensajes in-band para coordinarla. El mejor ejemplo de esto es Jingle, un protocolo de extensión de XMPP.
-    
    \end{itemize}
 
 
