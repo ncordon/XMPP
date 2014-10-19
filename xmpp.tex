@@ -282,9 +282,9 @@ El protocolo XMPP} % Subtitle
 
 \section{Estructura del XMPP}
   XMPP sigue una estructura cliente/servidor. El cliente y el servidor se comunican a través 
-  de una conexión TCP en el puerto 5222. Y la información que se envía sobre XMPP va contenida
+  de una conexión, normalmente TCP, en el puerto 5222. Y la información que se envía sobre XMPP va contenida
   en un streaming de objetos XML.
-  
+ 
   \subsection{Jabber ID}
   Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
   consta de usuario y dirección DNS (o en su defecto, dirección IP) del servidor donde el usuario reside, de la forma:
@@ -302,7 +302,7 @@ El protocolo XMPP} % Subtitle
   %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
   % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
   
-  \subsection{Proceso de entrega de mensajes}
+  \subsection{Comunicación cliente-servidor}
     \subsubsection{Inicio de la sesión}
       La sesión se inicia con la etiqueta \texttt{<stream>} y se finalizará con la etiqueta
       \texttt{</stream>}. Por razones de seguridad, a la apertura de la comunicación le sigue
@@ -311,13 +311,23 @@ El protocolo XMPP} % Subtitle
       
       Más detalladamente, para requerir un nuevo inicio de sesión, el cliente envía un paquete para la apertura:
       \begin{lstlisting}[language=XML] 
-<stream:stream to='example.com' 
+<stream:stream 
 	  xmlns='jabber:client'
 	  xmlns:stream='http://etherx.jabber.org/streams'
+	  to='example.com' 
 	  version='1.0'>
       \end{lstlisting}
+      y el servidor responde enviando un stream tag al cliente:
+      \begin{lstlisting}[language=XML] 
+<stream:stream
+	  xmlns='jabber:client'
+	  xmlns:stream='http://etherx.jabber.org/streams'
+	  id='c2s_123'
+	  from='example.com'
+	  version='1.0'>
+      \end{lstlisting}    
       Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
-      devolverá entonces un paquete con los requisitos para la negociación TLS o SASL.
+      enviará un paquete con los requisitos para la negociación TLS o SASL.
       \begin{lstlisting}[language=XML]
 <stream:features> 
   <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>    
@@ -336,12 +346,14 @@ El protocolo XMPP} % Subtitle
     \begin{lstlisting}[language=XML]
 <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>    
     \end{lstlisting}
-    A lo que el servidor responderá en función de si el TLS está permitido o si causa error:
+    A lo que el servidor responderá en función de si el TLS está permitido o si causa error, informando en
+    este último caso al cliente del fallo en la negociación y cerrando ambos stream y la conexión TCP:
     \begin{lstlisting}[language=XML]
 <!-- Aceptado -->
 <proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
 <!-- Error -->
 <failure xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
+</stream:stream>
     \end{lstlisting}
     Cuando es procesada la solicitud TLS, el cliente solicitará una nueva sesión, a la que el servidor
     responderá con la necesidad de una negociación SASL.
