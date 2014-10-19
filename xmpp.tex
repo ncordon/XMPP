@@ -363,11 +363,21 @@ El protocolo XMPP} % Subtitle
      Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
      de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
     \end{enumerate}
-    
 
+    Ejemplo de información de presencia:
+\begin{lstlisting}[language=XML]
+<presence xml:lang='en'>
+  <show>dnd</show>
+  <status>Wooing Juliet</status>
+  <status xml:lang='cz'>Ja dvo&#x0159;&#x00ED;m Juliet</status>
+</presence>
+\end{lstlisting}
+  \subsection{IQ}
+    Los fragmentos de comunicación IQ proporcionan un mecanismo de petición-respuesta estructurado.
+  
   \subsection{Proceso de entrega de mensajes}
     La mayoría de ls aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
-    establezca
+    establezca sesión en un servidor con objetivo de iniciar procesos de IM y interactuar con los aspectos de presencia.
     
     La comunicación puede efectuarse entre un cliente y un servidor o  bien puede tratarse de un proceso servidor-servidor.
     La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
@@ -442,7 +452,78 @@ El protocolo XMPP} % Subtitle
     \end{lstlisting}
     
   \subsection{Inicio de sesión}
-  La mayoría de las aplicaciones XMPP están basadas en una arquitectura cliente-servidor que requiere que un cliente
+    Si el servidor soporta sesiones, debe incluir un elemento \texttt{<session/>}, que advierte al cliente del 
+    correcto establecimiento de sesión.
+    
+    El servidor indica al cliente que es necesario que establezca sesión:
+\begin{lstlisting}[language=XML]
+<stream:stream
+    xmlns='jabber:client'
+    xmlns:stream='http://etherx.jabber.org/streams'
+    id='c2s_345'
+    from='example.com'
+    version='1.0'>
+<stream:features>
+  <bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+</stream:features>
+\end{lstlisting}
+
+    El cliente solicita sesión al servidor:
+\begin{lstlisting}[language=XML]
+<iq to='example.com'
+    type='set'
+    id='sess_1'>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+</iq>
+\end{lstlisting}
+
+    El servidor informa al cliente que la sesión ha sido creada:
+\begin{lstlisting}[language=XML]   
+<iq from='example.com'
+    type='result'
+    id='sess_1'/>
+\end{lstlisting}
+
+    o en su defecto, si encuentra un error interno por el que no puede concederle sesión, no puede conectarse porque
+    sus credenciales carecen de permiso en el servidor, o el usuario ya ha iniciado sesión en el servidor, debe informar:
+\begin{lstlisting}[language=XML]
+<iq from='example.com' type='error' id='sess_1'>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+  <error type='wait'>
+    <internal-server-error
+        xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+  </error>
+</iq>
+
+
+<iq from='example.com' type='error' id='sess_1'>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+  <error type='auth'>
+    <forbidden
+        xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+  </error>
+</iq>
+\end{lstlisting}
+
+    Dependiendo de la implementación del servidor si el usuario ya tenía iniciada sesión, cancelará la sesión antearior
+    y concederá nueva sesión (primera alternativa de las listadas a continuación), o informará simplemente de que ya
+    dispone de una sesión, y mantendrá ésta, en lugar de conceder la nueva.
+\begin{lstlisting}[language=XML]
+<stream:error>
+  <conflict xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>
+</stream:error>
+</stream:stream>
+
+\begin{lstlisting}[language=XML]
+<iq from='example.com' type='error' id='sess_1'>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+  <error type='cancel'>
+    <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+  </error>
+</iq>
+\end{lstlisting}
+    
 \section{Conexión a otros protocolos. Pasarelas}
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
