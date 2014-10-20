@@ -283,27 +283,45 @@ El protocolo XMPP} % Subtitle
 
 
 \section{Estructura del XMPP}
-  XMPP sigue una estructura cliente/servidor. El cliente y el servidor se comunican a través 
-  de una conexión, normalmente TCP, en el puerto 5222. Y la información que se envía sobre XMPP va contenida
-  en un streaming de objetos XML. Cuando la comunicación es servidor-servidor la conexión se realiza típicamente 
-  a través del puerto 5269, mediante protocolo TCP.
- 
-  \subsection{Jabber ID}
-  Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
-  consta de usuario y dirección DNS (o en su defecto, dirección IP) del servidor donde el usuario reside, de la forma:
-  \texttt{username@example.com}. Así se evita tener que mantener un servidor central con la lista de IDs.
+  XMPP sigue una arquitectura distribuida cliente/servidor. El cliente y el servidor se comunican a través 
+  de una conexión prolongada, normalmente TCP, en el puerto 5222, mediante el intercambio de XML stanzas. Y la información 
+  que se envía sobre XMPP va contenida en un streaming de objetos XML. Cuando la comunicación es servidor-servidor la 
+  conexión se realiza típicamente a través del puerto 5269, mediante protocolo TCP.  
   
-  Para posibilitar la conexión de los usuarios desde varios clientes, los JID incluyen una cadena al final, separada
-  del ID por una barra /, y conocida como recurso (home, mobile,\ldots). Además, cada recurso puede
-  tener asignada una prioridad numérica de manera que \texttt{username@example.com} tenga por ejemplo mayor prioridad que 
-  \texttt{username@example.com/mobile} y los mensajes enviados al primer JID se entreguen a todos los clientes,
-  pero los enviados al segundo JID se entreguen sólo al cliente móvil. Mayor prioridad se refleja en un número más alto.
   
-  Asimismo, los JIDs sin la parte del nombre de usuario son también válidos, y pueden ser empleados para mensajes del
-  sistema y control de ciertos aspectos en el servidor. Estos JIDs también pueden incluir la parte del recurso.
-  
-  %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
-  % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
+  \subsection{Jabber ID y servidores}
+    Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
+    consta de usuario y dirección DNS (o en su defecto, dirección IP) del servidor donde el usuario reside, de la forma:
+    \texttt{username@example.com}. Así se evita tener que mantener un servidor central con la lista de IDs.
+    
+    Para posibilitar la conexión de los usuarios desde varios clientes, los JID incluyen una cadena al final, separada
+    del ID por una barra /, y conocida como recurso (home, mobile,\ldots). Además, cada recurso puede
+    tener asignada una prioridad numérica de manera que \texttt{username@example.com} (bare JID) tenga por ejemplo mayor prioridad que 
+    \texttt{username@example.com/mobile}(full JID) y los mensajes enviados al primer JID se entreguen a todos los clientes,
+    pero los enviados al segundo JID se entreguen sólo al cliente móvil. Mayor prioridad se refleja en un número más alto.
+    
+    Asimismo, los JIDs sin la parte del nombre de usuario son también válidos, y pueden ser empleados para mensajes del
+    sistema y control de ciertos aspectos en el servidor. Estos JIDs también pueden incluir la parte del recurso.
+    
+    Un servidor (\texttt{@example.com}) es una entidad que debe ser capaz de:
+    \begin{itemize}
+     \item Intercambiar XML streams con los clientes conectados y enviar XML stanzas sobre los streams negociados. Así, el
+     seridor debe asegurarse de que el cliente se identifica antes de proporcionarle acceso a la red XMPP.
+     \item Intercambiar XML streams con otros servidores, y enviar XML stanzas a dichos servidores de acuerdo a la política
+     de comunicación que sigan cada uno
+     \item Almacenar data usada por los clientes (listas de contactos, información de presencia, \ldots). Esto es una
+     responsabilidad secundaria
+     \item Hacer de hosting a servicios añadidos al XMPP como la conferencia multi-usuario.
+    \end{itemize}
+    
+      % Imagen de ejemplo de la red
+      \begin{center}
+      \includegraphics[width=12cm]{network.png}
+      \end{center}
+      
+    
+    %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
+    % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
   
   \subsection{Tipo de mensajes}
     En los mensajes se puede incluir, aunque no es obligatorio, un atributo que indique el tipo, con objetivo de poder
@@ -338,7 +356,9 @@ El protocolo XMPP} % Subtitle
 
   \subsection{Presencia}
     Se usan, ya sea por \texttt{jabber:client} o \texttt{jabber:server} para expresar la disponibilidad en red en un
-    determinado momento de una entidad. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
+    determinado momento de una entidad. Aunque conocer la disponibilidad de una entidad no es estrictamente
+    necesario para el intercambio de mensajes XMPP, sí que facilita la interacción en tiempo real. Se indica 
+    mediante \texttt{<presence/>}. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
     \begin{itemize}
      \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación
      \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario %???????
