@@ -629,8 +629,14 @@ El protocolo XMPP} % Subtitle
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
   \subsection{XMPP y HTTP}
-  
-  
+    La mayoría de firewalls están configurados para permitir el 
+    paso de TCP hacia el puerto 80 que usa el protocolo HTML, mientras que
+    se bloquea el puerto usado por XMPP.
+    
+    En las especificaciones originales, XMPP utilizaba las funciones \texttt{GET} y
+    \texttt{POST} de HTML para enviar los mensajes al servidor cuando era necesario
+    (técnica de polling). Además, existen servidores públicos escuchando conexiones
+    XMPP por el puerto 80.
 
   
 %% ------ Bibliografía ------------------------------------------------------
