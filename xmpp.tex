@@ -261,7 +261,7 @@ El protocolo XMPP} % Subtitle
    \subsection{Desventajas}
    \begin{itemize}
     \item \textbf{Carece de soporte QoS (Quality of service)}\\
-    La garantía de entrega de mensajes debe construirse por encima de la capa XMPP
+    La garantía de entrega de mensajes debe construirse por encima de la capa XMPP.
     % ? Normally, this is done using simple sequence number attributes in stanzas.
     \item \textbf{Redundancia}\\
     Alrededor del 70\% del tráfico entre servidores son datos de presencia, siendo el 60\% de estos transmisiones 
@@ -297,7 +297,7 @@ El protocolo XMPP} % Subtitle
   del ID por una barra /, y conocida como recurso (home, mobile,\ldots). Además, cada recurso puede
   tener asignada una prioridad numérica de manera que \texttt{username@example.com} tenga por ejemplo mayor prioridad que 
   \texttt{username@example.com/mobile} y los mensajes enviados al primer JID se entreguen a todos los clientes,
-  pero los enviados al segundo JID se entreguen sólo al cliente móvil. Mayor prioridad se refleja en un número más alto.
+  pero los enviados al segundo JID se entreguen sólo al cliente móvil. La mayor prioridad se refleja en un número más alto.
   
   Asimismo, los JIDs sin la parte del nombre de usuario son también válidos, y pueden ser empleados para mensajes del
   sistema y control de ciertos aspectos en el servidor. Estos JIDs también pueden incluir la parte del recurso.
@@ -518,7 +518,7 @@ El protocolo XMPP} % Subtitle
   <conflict xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>
 </stream:error>
 </stream:stream>
-
+\end{lstlisting}
 \begin{lstlisting}[language=XML]
 <iq from='example.com' type='error' id='sess_1'>
   <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
