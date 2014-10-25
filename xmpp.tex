@@ -610,6 +610,22 @@ El protocolo XMPP} % Subtitle
 
       
 \section{Conexión a otros protocolos. Pasarelas}
+  \subsection{Conexión a otros protocolos}
+    Una característica útil de la que se intentó dotar a XMPP desde el inicio
+    fue la posibilidad de comunicarse con otros protocolos de mensajería.
+    Esto lo consigue mediante portales (XMPP gateways) que permiten al usuario
+    hacer uso de otros servicios de mensajería instantánea, SMS o email.
+    
+    Los portales pueden ofrecerlos los servidores y cualquier usuario puede
+    registrarse en ellos. Los propios portales funcionarán como proxies,
+    autenticándose en la red no-XMPP y actuando en nombre del usuario.
+    El proceso será transparente para el cliente, que seguirá funcionando
+    como si se comunicara mediante XMPP.
+    
+    \begin{center}
+      \includegraphics[width=12cm]{external.png}
+    \end{center}
+    
   \subsection{Protocolos base de XMPP}
   \subsection{Extensiones a XMPP}
   \subsection{XMPP y HTTP}
