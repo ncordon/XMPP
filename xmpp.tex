@@ -31,15 +31,8 @@
 \usepackage{wrapfig} % Allows in-line images
 \usepackage[utf8]{inputenc}
 
-% Imágenes
-\usepackage{graphicx} 
-
-\usepackage{amsmath}
-% para importar svg
-%\usepackage[generate=all]{svgfig}
-
 % sudo apt-get install texlive-lang-spanish
-\usepackage[spanish]{babel} % English language/hyphenation
+\usepackage[spanish]{babel}
 \selectlanguage{spanish}
 % Hay que pelearse con babel-spanish para el alineamiento del punto decimal
 \decimalpoint
@@ -49,18 +42,17 @@
 \addto\shorthandsspanish{\let\esperiod\es@period@code}
 \makeatother
 
+
 \usepackage{longtable}
 \usepackage{tabu}
 \usepackage{supertabular}
-
 \usepackage{multicol}
 \newsavebox\ltmcbox
 
-% Para matrices
-\usepackage{amsmath}
 
 % Símbolos matemáticos
 \usepackage{amssymb}
+\usepackage{amsmath}
 \let\oldemptyset\emptyset
 \let\emptyset\varnothing
 
@@ -78,7 +70,7 @@
 \newcommand{\imagen}[2]{\begin{center} \includegraphics[width=90mm]{#1} \\#2 \end{center}}
 
 \renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
-\begin{flushright} % Right align
+  \begin{flushright} % Right align
     {\LARGE\@title} % Increase the font size of the title
     
     \vspace{50pt} % Some vertical space between the title and author name
@@ -87,7 +79,7 @@
     \\\@date % Date
     
     \vspace{40pt} % Some vertical space between the author block and abstract
-\end{flushright}
+  \end{flushright}
 }
 
 
@@ -144,8 +136,6 @@
 
 
 \usepackage[hidelinks]{hyperref}
-
-\newenvironment{coq_example}{\begin{coq}}{\end{coq}}
 
 % Tildes
 \lstset{
