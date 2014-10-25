@@ -322,6 +322,14 @@ El protocolo XMPP} % Subtitle
     
     %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
     % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
+  \subsection{XML Stanzas}
+    Un cliente y un servidor de XMPP, tras terminar la conexión y la negociación de seguridad,
+    pasan a enviarse XML Stanzas, la máxima unidad semántica dentro de \texttt{<stream>} que deben procesar.
+    Cada stanza estará iniciada por una etiqueta al primer nivel de profundidad sobre \texttt{<stream>},
+    y se finalizará con otra etiqueta al mismo nivel.
+    
+    El protocolo XMPP usa tres tipos de stanzas, que se describen a continuación: \texttt{<message>}, \texttt{<presence>}
+    e \texttt{<iq>}.
   
   \subsection{Tipo de mensajes}
     En los mensajes se puede incluir, aunque no es obligatorio, un atributo que indique el tipo, con objetivo de poder
