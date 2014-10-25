@@ -610,6 +610,8 @@ El protocolo XMPP} % Subtitle
 
       
 \section{Conexión a otros protocolos. Pasarelas}
+  \subsection{Protocolos base de XMPP}
+
   \subsection{Conexión a otros protocolos}
     Una característica útil de la que se intentó dotar a XMPP desde el inicio
     fue la posibilidad de comunicarse con otros protocolos de mensajería.
@@ -626,8 +628,6 @@ El protocolo XMPP} % Subtitle
       \includegraphics[width=12cm]{external.png}
     \end{center}
     
-  \subsection{Protocolos base de XMPP}
-  \subsection{Extensiones a XMPP}
   \subsection{XMPP y HTTP}
     La mayoría de firewalls están configurados para permitir el 
     paso de TCP hacia el puerto 80 que usa el protocolo HTML, mientras que
@@ -637,6 +637,24 @@ El protocolo XMPP} % Subtitle
     \texttt{POST} de HTML para enviar los mensajes al servidor cuando era necesario
     (técnica de polling). Además, existen servidores públicos escuchando conexiones
     XMPP por el puerto 80.
+    
+
+  \subsection{Extensiones a XMPP}
+    La fundación XMPP desarrolla extensiones al protocolo mediante un proceso
+    centrado en los protocolos de extensión de XMPP (XEPs).
+    
+    % http://xmpp.org/xmpp-protocols/xmpp-extensions/
+    De esta manera se implementan detalles del protocolo como:
+    \begin{itemize}
+     \item Chat multiusuario.
+     \item Avatares de usuario.
+     \item Interacción con los portales.
+     \item Información de última actividad.
+     \item Control de stanzas maliciosas.
+    \end{itemize}
+
+    
+
 
   
 %% ------ Bibliografía ------------------------------------------------------
