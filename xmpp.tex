@@ -643,7 +643,66 @@ El protocolo XMPP} % Subtitle
      \item Control de stanzas maliciosas.
     \end{itemize}
 
-    
+\section{XMPP y WhatsApp}
+WhatsApp es una aplicación de mensajería instantánea multiplataforma que posibilita el envío y la recepción de mensajes a 
+través de internet, disponible en los sistemas operativos iOS, Android, Windows Phone, BlackBerry OS y Symbian. Utiliza una
+versión propia/modificada de XMPP, llamada FunXMPP, dándose algunas diferencias entre el protocolo y su modificado, que
+describimos a continuación.
+
+\begin{enumerate}
+ \item XMPP posibilita la transmisión de cualquier atributo del cliente, incluyendo namespaces, mientras que WhatsApp
+  permite únicamente dos: 'to' y 'resource' %stream:stream nodes????
+ \item XMPP posibilita cualquier característica del Stream durante la comunicaión. WhatsApp sólo \texttt{<receipt\_acks />};
+  ni siquiera sasl
+ \item En cuanto a los mecanismos SASL, XMPP permite cualquier, incluido DIGEST-MD5, mientras que WhatsApp sólo permite 
+  este último
+ \item Cuando la petición SASL tiene éxito en una comunicación cliente-servidor XMPP, se abre un nuevo strem reemplazando al antiguo. En
+  En WhatsApp sin embargo, después de \texttt{<success />} el servidor no envía nada.
+ \item En Whatsapp no existen los resources, ya que un usario sólo puede tener un log-in hecho, a diferencia de XMPP, en
+  el que se pueden tener varios log-ins desde distintos dispositivos.
+ \item En WhatsApp el JID está conmpuesto de la forma \texttt{número\_de\_teléfono@s.whatsapp.net}
+ \item Las palabras reservadas de usadas por XMPP tales como body, from, \ldots se codifican en FunXMPP mediante
+  una tabla Hash que las sustituye por un byte de la forma \texttt{xnn} donde \texttt{nn} representa un número
+  hexadecimal.
+\end{enumerate}
+
+Un ejemplo de mensaje real decodificado podría ser:
+
+\begin{lstlisting}[language=XML] 
+ <\to="s.whatsapp.net" resource="iPhone-2.10.2-5222" />
+ <stream:features>
+    <message_acks enable=TRUE />
+    <receipt_acks />
+    <w:profile:picture type=ALL />
+    <status notification=TRUE />
+</stream:features>
+
+<aut mechanism="WAUTH-1" user="XXXXXXXX"
+  xmlns="urn:ietf:params:xml:ns:xmpp-sasl" />
+\end{lstlisting}
+
+donde codificado se habría transmitido sería algo así:
+\begin{lstlisting}[language=XML] 
+ <\x01 \xc8=\xab \xa5="iPhone-2.10.2-5222" />
+ <\xbb>
+    <\x70 \x31=\xca />
+    <\x9c />
+    <\xe4 \xcb=\x0c />
+    <\xb9 \x7c=\xca />
+</\xbb>
+
+<\x10 \x6d=\xec \x0b="XXXXXXXXXXXX"
+  \xe8=\xcf />
+\end{lstlisting}
+
+Las conexiones en WhatsApp comienzan siempre con la identificación de la versión del protocolo que se emplea (p.e. 
+WhatsApp 1.2). Se solicita conexión a los servidores de la aplicación \texttt{s.whatsapp.net} y se realiza el intercambio
+de características soportadas por el dispositivo y la vesión ejecutada de WhatsApp.
+
+Finalmente se elige el mecanismo de autenticación (WAUTH-1) mediante SASL, indicando como JID el número de teléfono.
+SASL es un framework de autenticación y autorización en protocolos de internet, que permite separra los mecanismos de
+autenticación (en este caso WAUTH-1) de los protocolos de las aplicaciones en sí.
+
 
 
   
