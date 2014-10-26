@@ -660,9 +660,14 @@ describimos a continuación.
   En WhatsApp sin embargo, después de \texttt{<success />} el servidor no envía nada.
  \item En Whatsapp no existen los resources, ya que un usario sólo puede tener un log-in hecho, a diferencia de XMPP, en
   el que se pueden tener varios log-ins desde distintos dispositivos.
- \item En WhatsApp el JID está conmpuesto de la forma \texttt{número\_de\_teléfono@s.whatsapp.net}
+ \item En WhatsApp el JID está compuesto de la forma:
+   \begin{center}
+    \texttt{número\_de\_teléfono@s.whatsapp.net}
+   \end{center}
+  Esto asegura que la cuenta creada pertenezca a un número de teléfono móvil, pero resta en privacidad en la medida
+  que el conocer el número telefónico de un individuo ya nos aporta su usuario de WhatsApp.
  \item Las palabras reservadas de usadas por XMPP tales como body, from, \ldots se codifican en FunXMPP mediante
-  una tabla Hash que las sustituye por un byte de la forma \texttt{xnn} donde \texttt{nn} representa un número
+  una tabla Hash que las sustituye por un byte de la forma $\backslash$\texttt{nn} donde \texttt{nn} representa un número
   hexadecimal.
 \end{enumerate}
 
@@ -681,7 +686,7 @@ Un ejemplo de mensaje real decodificado podría ser:
   xmlns="urn:ietf:params:xml:ns:xmpp-sasl" />
 \end{lstlisting}
 
-donde codificado se habría transmitido sería algo así:
+donde con la equivalencia hash sería algo así:
 \begin{lstlisting}[language=XML] 
  <\x01 \xc8=\xab \xa5="iPhone-2.10.2-5222" />
  <\xbb>
@@ -703,9 +708,70 @@ Finalmente se elige el mecanismo de autenticación (WAUTH-1) mediante SASL, indi
 SASL es un framework de autenticación y autorización en protocolos de internet, que permite separra los mecanismos de
 autenticación (en este caso WAUTH-1) de los protocolos de las aplicaciones en sí.
 
+A pesar de las diferencias entre XMPP y FunXMPP, éste último sigue las especificaciones de XMPP en el envío de la
+mayoría de mensajes (inicios de stream, presencia, \ldots)
 
+\subsection{Autenticación WAUTH-1 y WAUTH-2}
+Inicialmente, el password era el resultado de una función hash MD5 sobre la dirección MAC en los iOS, y el IMEI para
+móviles Android, Windows Phone y Symbian.
+Debido a los agujeros de seguridad que surgieron y que fueron aprovechados por ataques como \texttt{Espía WhatsApp},
+MD5 dejó de usarse a partir del 24 de diciembre de 2012, lo que dio paso a WAUTH-1 y WAUTH-2
 
-  
+\subsubsection{WAUTH-1}
+Cuando se registra el teléfono en la aplicación(vía HTTPS), se genera un password en los servidores de WhatsApp que será compartido
+entre el teléfono y los servidores.
+
+Cuando el teléfono trata de logearse en WhatsApp los ser servidores le envían un desafío (\texttt{<challenge>} de 20B, que junto con el
+password generan las claves RC4 y HMAC de la sesión. 
+
+Para acceder al sistema, el teléfono enviará:
+\begin{lstlisting}[language=XML]
+ <auth xmlns="urn:ietf:params:xml:ns:xmpp_sasl" user="XXXXXXXXXXXX"
+ mechanism="AUTH-1" />
+\end{lstlisting}
+
+El servidor responderá al terminal con un desafío de 20 bytes:
+\begin{lstlisting}[language=XML]
+ <challenge xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">YYYYYYYYYYYYYYYYYYYY
+ </challenge>
+\end{lstlisting}
+
+Las claves RC4(para cifrar la comunicación) y HMAC(para validar la integridad de los mensajes) son el resultado 
+de iterar PKBDF2 16 veces, con el password, el challenge como salt y SHA1 como función de hash. Los 20 bytes más
+significativos del tipo \texttt{<numero teléfono> || <20 bytes de respuesta> || timestamp} son usados como clave
+RC4 y HMAC-SHA1 durante la sesión de comunicación teléfono-servidor.
+
+\begin{lstlisting}[language=XML]
+ <reponse xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">ZZZZZZZZZZZZZ</reponse>
+\end{lstlisting}
+
+A partir de este momento los mensajes van cifrados.
+
+Como el algoritmo de cifrado RC4 usa el mismo password tanto para los mensajes cliente-servidor como servidor-cliente,
+esto suponía una vulnerabilidad aprovechable para revelar conversaciones de Whatsapp, por lo que se migró al protocolo
+de autenticación WAUTH-2.
+    \begin{center}
+      \includegraphics[width=13cm]{wauth-1.jpg}
+    \end{center}
+\subsubsection{WAUTH-2}
+Lo que cambia de WAUTH-2 respecto a WAUTH-1 es que se emplea PKBDF2 cuatro veces en lugar de 1, para generar cuatro
+claves diferentes, empleando 2 iteraciones del algoritmo en lugar de 16, y se va concatenando en cada una de las
+cuatro veces un byte al desafío (la primera vez el byte 0x01, la segunda el 0x02, \ldots).
+
+De las cuatro claves, dos son para la sesión del teléfono y otras dos para la sesión del servidor.
+\begin{enumerate}
+ \item La primera se emplea para cifrar y descifrar mediante RC4 las conversaciones del teléfono hacia los servidores
+  WhatsApp
+ \item La segunda se usa para validar la integridad de los mensajes enviados desde el teléfono a los servidores.
+ \item La tercera se emplea para cifrar y descifrar mediante RC4 las conversaciones desde los servidores hacia el 
+  teléfono.
+ \item La cuarta se utiliza para validar la integridad de los mensajes enviados desde los servidores al teléfono.
+\end{enumerate}
+
+Otro aspecto que difiere es que antes de calcular el HMAC-SHA1 se concatenan cuatro bytes al final del mensaje indicando
+el número del mismo (por ejemplo, se concatenaría 0x00000003 si  el mensaje que vamos a enviar es el tercero, antes
+de calcularle el HMAC-SHA1).
+
 %% ------ Bibliografía ------------------------------------------------------
 \vfill
 \begin{thebibliography}{9}
@@ -720,11 +786,29 @@ autenticación (en este caso WAUTH-1) de los protocolos de las aplicaciones en s
   
 \bibitem{xmpp3920}
   RFC 3920.\\
-  \url{http://tools.ietf.org/html/rfc3920}
+  \url{https://xmpp.org/rfcs/rfc3920.html}
   
 \bibitem{xmpp3921}
   RFC 3921.\\
   \url{http://xmpp.org/rfcs/rfc3921.html}
-\end{thebibliography}  
+
+\bibitem{xmpp6120}
+  RFC 6120.\\
+  \url{https://xmpp.org/rfcs/rfc6120.html}
+  
+\bibitem{xmpp6121}
+  RFC 6121.\\
+  \url{https://xmpp.org/rfcs/rfc6121.html}
+  
+\bibitem{funxmpp}
+  Entendiendo el protocolo de WhatsApp\\
+  Artículos I y II\\
+  \url{http://www.seguridadofensiva.com}
+
+\bibitem{wa-auth}
+  WhatsApp Authentication\\
+  \url{http://www.seguridadofensiva.com}
+
+\end{thebibliography} 
   
 \end{document}
