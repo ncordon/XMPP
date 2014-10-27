@@ -364,7 +364,7 @@ El protocolo XMPP} % Subtitle
 	
 	\item \texttt{<body/>}\\
 	Contiene XML human-readable. Especifica el contenido del mensaje. No debe contener atributos, con excepción
-	del \texttt{xml:lang}
+	del \texttt{xml:lang}.
 	
 	\item \texttt{<thread/>}\\
 	Contiene XML no human-readable, indicando un identificador para rastrear un thread de conversación (una sesión de
@@ -377,32 +377,35 @@ El protocolo XMPP} % Subtitle
       determinado momento de una entidad. Aunque conocer la disponibilidad de una entidad no es estrictamente
       necesario para el intercambio de mensajes XMPP, sí que facilita la interacción en tiempo real. Se indica 
       mediante \texttt{<presence/>}. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
+      
       \begin{itemize}
-      \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación
-      \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario %???????
+      \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación.
+      \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario. % Solicita poder leer su estado
       \item \texttt{subscribed} El emisor ha permitido al receptor recibir su presencia.
       \item \texttt{unsubscribe} El emisor se está desvinculando de la presencia de una entidad.
-      \item \texttt{unsubscribed} La petición de suscripción ha sido rachazada o se ha cancelado una suscripción
-      \item \texttt{probe} Petición de la presencia de una entidad
-      \item \texttt{error} Relacionado con el proceso de envio de una presencia
+      \item \texttt{unsubscribed} La petición de suscripción ha sido rechazada o se ha cancelado una suscripción.
+      \item \texttt{probe} Petición de la presencia de una entidad.
+      \item \texttt{error} Relacionado con el proceso de envio de una presencia.
       \end{itemize}
       
-      Además,la presencia puede incluir los elementos:
+      Además, la presencia puede incluir los elementos:
       \begin{enumerate}
-      \item \texttt{<show/>}\\
-      A su vez, puede tomar los valores:
-      \begin{itemize}
-	\item \texttt{away} 
-	\item \texttt{chat} La entidad está activa
-	\item \texttt{dnd} (Do not disturb)
-	\item \texttt{xa} (Extended away) La entidad se encuentra ausente por un gran periodo de tiempo.
-      \end{itemize}
-      \item \texttt{<status/>}
-      Contiene XML human-readable, especificando disponibilidad, y se usa para complementar el valor de \texttt{<show/>}.
-      Por ejemplo: En una reunión.
-      \item \texttt{<priority/>}
-      Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
-      de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
+	\item \texttt{<show/>}\\
+	A su vez, puede tomar los valores:
+	\begin{itemize}
+	  \item \texttt{away} - Entidad ausente.
+	  \item \texttt{chat} - La entidad está activa.
+	  \item \texttt{dnd} - No molestar. (Do not disturb)
+	  \item \texttt{xa} - Ausente por un gran periodo de tiempo. (Extended away)
+	\end{itemize}
+	
+	\item \texttt{<status/>}\\
+	Contiene XML human-readable, especificando disponibilidad, y se usa para complementar el valor de \texttt{<show/>}.
+	Por ejemplo: En una reunión.
+	
+	\item \texttt{<priority/>}\\
+	Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
+	de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
       \end{enumerate}
 
       Ejemplo de información de presencia:
@@ -413,14 +416,16 @@ El protocolo XMPP} % Subtitle
     <status xml:lang='cz'>Ja dvo&#x0159;&#x00ED;m Juliet</status>
   </presence>
   \end{lstlisting}
+  
     \subsubsection{IQ}
       Los fragmentos de comunicación IQ proporcionan un mecanismo de petición-respuesta estructurado.
-  
+      %% Quizá habría que ampliarlo.
+ 
   \subsection{Proceso de entrega de mensajes}
-    La mayoría de ls aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
+    La mayoría de las aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
     establezca sesión en un servidor con objetivo de iniciar procesos de IM y interactuar con los aspectos de presencia.
     
-    La comunicación puede efectuarse entre un cliente y un servidor o  bien puede tratarse de un proceso servidor-servidor.
+    La comunicación puede efectuarse entre cliente y servidor o bien entre servidor y servidor.
     La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
     donde el servidor que solicita comunicación desempeñaría el rol de cliente:
   
@@ -449,7 +454,7 @@ El protocolo XMPP} % Subtitle
       \end{lstlisting}    
       Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
       enviará un paquete con los requisitos para la negociación TLS o SASL. Si nos encontraramos en un caso de 
-      comunicación servidor servidor, la línea \texttt{xmlns='jabber:client'} se vería sustituida por 
+      comunicación servidor-servidor, la línea \texttt{xmlns='jabber:client'} se vería sustituida por 
       \texttt{xmlns='jabber:server'}, y estos son los dos únicos valores posibles que puede tomar dicho campo.
       \begin{lstlisting}[language=XML]
 <stream:features> 
@@ -467,13 +472,13 @@ El protocolo XMPP} % Subtitle
   \subsubsection{Encriptación y autorización}
     Si el servidor necesita una negociación TLS, el cliente enviará un \texttt{STARTTLS} al servidor:
     \begin{lstlisting}[language=XML]
-<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>    
+<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
     \end{lstlisting}
     A lo que el servidor responderá en función de si el TLS está permitido o si causa error, informando en
-    este último caso al cliente del fallo en la negociación y cerrando ambos stream y la conexión TCP:
+    este último caso al cliente del fallo en la negociación y cerrando ambos el stream y la conexión TCP:
     \begin{lstlisting}[language=XML]
 <!-- Aceptado -->
-<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
+<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
 <!-- Error -->
 <failure xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
 </stream:stream>
@@ -525,9 +530,8 @@ El protocolo XMPP} % Subtitle
     type='result'
     id='sess_1'/>
 \end{lstlisting}
-
     o en su defecto, si encuentra un error interno por el que no puede concederle sesión, no puede conectarse porque
-    sus credenciales carecen de permiso en el servidor, o el usuario ya ha iniciado sesión en el servidor, debe informar:
+    sus credenciales carecen de permiso en el servidor o el usuario ya ha iniciado sesión en el servidor, debe informar:
 \begin{lstlisting}[language=XML]
 <iq from='example.com' type='error' id='sess_1'>
   <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
@@ -547,9 +551,9 @@ El protocolo XMPP} % Subtitle
 </iq>
 \end{lstlisting}
 
-    Dependiendo de la implementación del servidor si el usuario ya tenía iniciada sesión, cancelará la sesión antearior
-    y concederá nueva sesión (primera alternativa de las listadas a continuación), o informará simplemente de que ya
-    dispone de una sesión, y mantendrá ésta, en lugar de conceder la nueva.
+    Si el usuario ya había iniciado sesión, se cancelará la sesión anterior y se concederá
+    una nueva sesión. Pero dependiendo de la implementación del servidor, se podrá también informar
+    simplemente de que ya se dispone de sesión y mantenerla.
     
 \begin{lstlisting}[language=XML]
 <stream:error>
@@ -570,7 +574,7 @@ El protocolo XMPP} % Subtitle
       Si un mensaje es enviado en respuesta a un mensaje previamente recibido de una dirección de la forma 
       \texttt{user@domain/resource}, el valor de \texttt{to} debería ser de la forma \texttt{<user@domain/resource>}. Si el
       mensaje está enviado fuera del contexto de una sesión de chat, o el emisor tiene constancia que el receptor ya no
-      está disponible, debe dirigir el mensaje a \texttt{<user@domain>}
+      está disponible, debe dirigir el mensaje a \texttt{<user@domain>}.
       
       Ejemplo de mensaje con \texttt{subject}:
 \begin{lstlisting}[language=XML]  
@@ -615,13 +619,10 @@ El protocolo XMPP} % Subtitle
   <body>How cam'st thou hither, tell me, and wherefore?</body>
   <thread>e0ffe42b28561960c6b12b944a092794b9683a38</thread>
 </message>
-
 \end{lstlisting}
 
       
 \section{Conexión a otros protocolos. Pasarelas}
-  \subsection{Protocolos base de XMPP}
-
   \subsection{Conexión a otros protocolos}
     Una característica útil de la que se intentó dotar a XMPP desde el inicio
     fue la posibilidad de comunicarse con otros protocolos de mensajería.
