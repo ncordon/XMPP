@@ -328,6 +328,156 @@ El protocolo XMPP} % Subtitle
     %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
     % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
     
+  \section {Proceso de entrega de mensajes.}
+    La mayoría de las aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
+    establezca sesión en un servidor con objetivo de iniciar procesos de IM y interactuar con los aspectos de presencia.
+    
+    La comunicación puede efectuarse entre cliente y servidor o bien entre servidor y servidor.
+    La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
+    donde el servidor que solicita comunicación desempeñaría el rol de cliente:
+  
+    \subsection{Inicio de sesión}
+      \subsubsection{Solicitud de inicio de la sesión}
+	La sesión se inicia con la etiqueta \texttt{<stream>} y se finalizará con la etiqueta
+	\texttt{</stream>}. Por razones de seguridad, a la apertura de la comunicación le sigue
+	negociación por TLS y SASL. Después de la negociación, se abre un nuevo canal de comunicación
+	más seguro.
+	
+	Más detalladamente, para requerir un nuevo inicio de sesión, el cliente envía un paquete para la apertura:
+	\begin{lstlisting}[language=XML] 
+  <stream:stream 
+	    xmlns='jabber:client'
+	    xmlns:stream='http://etherx.jabber.org/streams'
+	    to='example.com' 
+	    version='1.0'>
+	\end{lstlisting}
+	y el servidor responde enviando un stream tag al cliente:
+	\begin{lstlisting}[language=XML] 
+  <stream:stream
+	    xmlns='jabber:client'
+	    xmlns:stream='http://etherx.jabber.org/streams'
+	    id='c2s_123'
+	    from='example.com'
+	    version='1.0'>
+	\end{lstlisting}    
+	Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
+	enviará un paquete con los requisitos para la negociación TLS o SASL. Si nos encontraramos en un caso de 
+	comunicación servidor-servidor, la línea \texttt{xmlns='jabber:client'} se vería sustituida por 
+	\texttt{xmlns='jabber:server'}, y estos son los dos únicos valores posibles que puede tomar dicho campo.
+	\begin{lstlisting}[language=XML]
+  <stream:features> 
+    <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>    
+      <required/>  
+    </starttls>  
+    <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>    
+      <mechanism>DIGEST-MD5</mechanism>    
+      <mechanism>PLAIN</mechanism>   
+      <mechanism>EXTERNAL</mechanism>  
+    </mechanisms> 
+  </stream:features>
+	\end{lstlisting}
+
+      \subsubsection{Encriptación y autorización}
+	Si el servidor necesita una negociación TLS, el cliente enviará un \texttt{STARTTLS} al servidor:
+	\begin{lstlisting}[language=XML]
+  <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+	\end{lstlisting}
+	A lo que el servidor responderá en función de si el TLS está permitido o si causa error, informando en
+	este último caso al cliente del fallo en la negociación y cerrando ambos el stream y la conexión TCP:
+	\begin{lstlisting}[language=XML]
+  <!-- Aceptado -->
+  <proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+  <!-- Error -->
+  <failure xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
+  </stream:stream>
+	\end{lstlisting}
+	Cuando es procesada la solicitud TLS, el cliente solicitará una nueva sesión, a la que el servidor
+	responderá con la necesidad de una negociación SASL.
+
+	Para la negociación SASL, el cliente debe elegir un método de autenticación entre los disponibles
+	(DIGEST-MD5, PLAIN y EXTERNAL). En el caso de autorización más simple (PLAIN), se envía una cadena
+	codificada como "\texttt{$\backslash$0User$\backslash$0Pass}". El servidor responderá a esto en 
+	función de si acepta o no la petición:
+	\begin{lstlisting}[language=XML]
+  <!-- Aceptado -->
+  <success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+  <!-- Error -->
+  <failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+	\end{lstlisting}
+	
+      \subsubsection{Establecimiento de sesión}
+	Si el servidor soporta sesiones, debe incluir un elemento \texttt{<session/>}, que advierte al cliente del 
+	correcto establecimiento de sesión.
+	
+	El servidor indica al cliente que es necesario que establezca sesión:
+  \begin{lstlisting}[language=XML]
+  <stream:stream
+      xmlns='jabber:client'
+      xmlns:stream='http://etherx.jabber.org/streams'
+      id='c2s_345'
+      from='example.com'
+      version='1.0'>
+  <stream:features>
+    <bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>
+    <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+  </stream:features>
+  \end{lstlisting}
+
+      El cliente solicita sesión al servidor:
+  \begin{lstlisting}[language=XML]
+  <iq to='example.com'
+      type='set'
+      id='sess_1'>
+    <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+  </iq>
+  \end{lstlisting}
+
+      El servidor informa al cliente que la sesión ha sido creada:
+  \begin{lstlisting}[language=XML]   
+  <iq from='example.com'
+      type='result'
+      id='sess_1'/>
+  \end{lstlisting}
+      o en su defecto, si encuentra un error interno por el que no puede concederle sesión, no puede conectarse porque
+      sus credenciales carecen de permiso en el servidor o el usuario ya ha iniciado sesión en el servidor, debe informar:
+  \begin{lstlisting}[language=XML]
+  <iq from='example.com' type='error' id='sess_1'>
+    <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+    <error type='wait'>
+      <internal-server-error
+	  xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+    </error>
+  </iq>
+
+
+  <iq from='example.com' type='error' id='sess_1'>
+    <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+    <error type='auth'>
+      <forbidden
+	  xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+    </error>
+  </iq>
+  \end{lstlisting}
+
+      Si el usuario ya había iniciado sesión, se cancelará la sesión anterior y se concederá
+      una nueva sesión. Pero dependiendo de la implementación del servidor, se podrá también informar
+      simplemente de que ya se dispone de sesión y mantenerla.
+      
+  \begin{lstlisting}[language=XML]
+  <stream:error>
+    <conflict xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>
+  </stream:error>
+  </stream:stream>
+  \end{lstlisting}
+  \begin{lstlisting}[language=XML]
+  <iq from='example.com' type='error' id='sess_1'>
+    <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+    <error type='cancel'>
+      <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+    </error>
+  </iq>
+  \end{lstlisting}  
+
   \subsection{XML Stanzas}
     Un cliente y un servidor de XMPP, tras terminar la conexión y la negociación de seguridad,
     pasan a enviarse XML Stanzas, la máxima unidad semántica dentro de \texttt{<stream>} que deben procesar.
@@ -421,163 +571,14 @@ El protocolo XMPP} % Subtitle
       Los fragmentos de comunicación IQ proporcionan un mecanismo de petición-respuesta estructurado.
       %% Quizá habría que ampliarlo.
  
-  \subsection{Proceso de entrega de mensajes}
-    La mayoría de las aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
-    establezca sesión en un servidor con objetivo de iniciar procesos de IM y interactuar con los aspectos de presencia.
+  \subsection{Intercambio de mensajes}
+    Si un mensaje es enviado en respuesta a un mensaje previamente recibido de una dirección de la forma 
+    \texttt{user@domain/resource}, el valor de \texttt{to} debería ser de la forma \texttt{<user@domain/resource>}. Si el
+    mensaje está enviado fuera del contexto de una sesión de chat, o el emisor tiene constancia que el receptor ya no
+    está disponible, debe dirigir el mensaje a \texttt{<user@domain>}.
     
-    La comunicación puede efectuarse entre cliente y servidor o bien entre servidor y servidor.
-    La descripción del proceso siguiente se hace para el caso cliente-servidor, siendo análoga para la otra posibilidad, 
-    donde el servidor que solicita comunicación desempeñaría el rol de cliente:
-  
-    \subsubsection{Solicitud de inicio de la sesión}
-      La sesión se inicia con la etiqueta \texttt{<stream>} y se finalizará con la etiqueta
-      \texttt{</stream>}. Por razones de seguridad, a la apertura de la comunicación le sigue
-      negociación por TLS y SASL. Después de la negociación, se abre un nuevo canal de comunicación
-      más seguro.
-      
-      Más detalladamente, para requerir un nuevo inicio de sesión, el cliente envía un paquete para la apertura:
-      \begin{lstlisting}[language=XML] 
-<stream:stream 
-	  xmlns='jabber:client'
-	  xmlns:stream='http://etherx.jabber.org/streams'
-	  to='example.com' 
-	  version='1.0'>
-      \end{lstlisting}
-      y el servidor responde enviando un stream tag al cliente:
-      \begin{lstlisting}[language=XML] 
-<stream:stream
-	  xmlns='jabber:client'
-	  xmlns:stream='http://etherx.jabber.org/streams'
-	  id='c2s_123'
-	  from='example.com'
-	  version='1.0'>
-      \end{lstlisting}    
-      Donde \texttt{example.com} es la URL del servidor XMPP al que se conecta. El servidor
-      enviará un paquete con los requisitos para la negociación TLS o SASL. Si nos encontraramos en un caso de 
-      comunicación servidor-servidor, la línea \texttt{xmlns='jabber:client'} se vería sustituida por 
-      \texttt{xmlns='jabber:server'}, y estos son los dos únicos valores posibles que puede tomar dicho campo.
-      \begin{lstlisting}[language=XML]
-<stream:features> 
-  <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>    
-    <required/>  
-  </starttls>  
-  <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>    
-    <mechanism>DIGEST-MD5</mechanism>    
-    <mechanism>PLAIN</mechanism>   
-    <mechanism>EXTERNAL</mechanism>  
-  </mechanisms> 
-</stream:features>
-      \end{lstlisting}
-
-  \subsubsection{Encriptación y autorización}
-    Si el servidor necesita una negociación TLS, el cliente enviará un \texttt{STARTTLS} al servidor:
-    \begin{lstlisting}[language=XML]
-<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
-    \end{lstlisting}
-    A lo que el servidor responderá en función de si el TLS está permitido o si causa error, informando en
-    este último caso al cliente del fallo en la negociación y cerrando ambos el stream y la conexión TCP:
-    \begin{lstlisting}[language=XML]
-<!-- Aceptado -->
-<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
-<!-- Error -->
-<failure xmlns='urn:ietf:params:xml:ns:xmpp-tls'/> 
-</stream:stream>
-    \end{lstlisting}
-    Cuando es procesada la solicitud TLS, el cliente solicitará una nueva sesión, a la que el servidor
-    responderá con la necesidad de una negociación SASL.
-
-    Para la negociación SASL, el cliente debe elegir un método de autenticación entre los disponibles
-    (DIGEST-MD5, PLAIN y EXTERNAL). En el caso de autorización más simple (PLAIN), se envía una cadena
-    codificada como "\texttt{$\backslash$0User$\backslash$0Pass}". El servidor responderá a esto en 
-    función de si acepta o no la petición:
-    \begin{lstlisting}[language=XML]
-<!-- Aceptado -->
-<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
-<!-- Error -->
-<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
-    \end{lstlisting}
-    
-  \subsubsection{Inicio de sesión}
-    Si el servidor soporta sesiones, debe incluir un elemento \texttt{<session/>}, que advierte al cliente del 
-    correcto establecimiento de sesión.
-    
-    El servidor indica al cliente que es necesario que establezca sesión:
-\begin{lstlisting}[language=XML]
-<stream:stream
-    xmlns='jabber:client'
-    xmlns:stream='http://etherx.jabber.org/streams'
-    id='c2s_345'
-    from='example.com'
-    version='1.0'>
-<stream:features>
-  <bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>
-  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
-</stream:features>
-\end{lstlisting}
-
-    El cliente solicita sesión al servidor:
-\begin{lstlisting}[language=XML]
-<iq to='example.com'
-    type='set'
-    id='sess_1'>
-  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
-</iq>
-\end{lstlisting}
-
-    El servidor informa al cliente que la sesión ha sido creada:
-\begin{lstlisting}[language=XML]   
-<iq from='example.com'
-    type='result'
-    id='sess_1'/>
-\end{lstlisting}
-    o en su defecto, si encuentra un error interno por el que no puede concederle sesión, no puede conectarse porque
-    sus credenciales carecen de permiso en el servidor o el usuario ya ha iniciado sesión en el servidor, debe informar:
-\begin{lstlisting}[language=XML]
-<iq from='example.com' type='error' id='sess_1'>
-  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
-  <error type='wait'>
-    <internal-server-error
-        xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-  </error>
-</iq>
-
-
-<iq from='example.com' type='error' id='sess_1'>
-  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
-  <error type='auth'>
-    <forbidden
-        xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-  </error>
-</iq>
-\end{lstlisting}
-
-    Si el usuario ya había iniciado sesión, se cancelará la sesión anterior y se concederá
-    una nueva sesión. Pero dependiendo de la implementación del servidor, se podrá también informar
-    simplemente de que ya se dispone de sesión y mantenerla.
-    
-\begin{lstlisting}[language=XML]
-<stream:error>
-  <conflict xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>
-</stream:error>
-</stream:stream>
-\end{lstlisting}
-\begin{lstlisting}[language=XML]
-<iq from='example.com' type='error' id='sess_1'>
-  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
-  <error type='cancel'>
-    <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-  </error>
-</iq>
-\end{lstlisting}
-
-    \subsubsection{Intercambio de mensajes}
-      Si un mensaje es enviado en respuesta a un mensaje previamente recibido de una dirección de la forma 
-      \texttt{user@domain/resource}, el valor de \texttt{to} debería ser de la forma \texttt{<user@domain/resource>}. Si el
-      mensaje está enviado fuera del contexto de una sesión de chat, o el emisor tiene constancia que el receptor ya no
-      está disponible, debe dirigir el mensaje a \texttt{<user@domain>}.
-      
-      Ejemplo de mensaje con \texttt{subject}:
-\begin{lstlisting}[language=XML]  
+    Ejemplo de mensaje con \texttt{subject}:
+    \begin{lstlisting}[language=XML]  
 <message
     to='romeo@example.net'
     from='juliet@example.com/balcony'
@@ -589,10 +590,10 @@ El protocolo XMPP} % Subtitle
   <body>Wherefore art thou, Romeo?</body>
   <body xml:lang='cz'>Pro&#x010D;e&#x017D; jsi ty, Romeo?</body>
 </message> 
-\end{lstlisting}
+    \end{lstlisting}
   
-      Ejemplo de thread de conversación:
-\begin{lstlisting}[language=XML]        
+    Ejemplo de thread de conversación:
+    \begin{lstlisting}[language=XML]        
 <message
     to='romeo@example.net/orchard'
     from='juliet@example.com/balcony'
@@ -619,7 +620,7 @@ El protocolo XMPP} % Subtitle
   <body>How cam'st thou hither, tell me, and wherefore?</body>
   <thread>e0ffe42b28561960c6b12b944a092794b9683a38</thread>
 </message>
-\end{lstlisting}
+    \end{lstlisting}
 
       
 \section{Conexión a otros protocolos. Pasarelas}
