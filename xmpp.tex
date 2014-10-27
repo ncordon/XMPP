@@ -211,41 +211,54 @@ El protocolo XMPP} % Subtitle
 %--------------------------------------------
 
 \section{Introducción al XMPP}
-  El protocolo XMPP (Extensible Messaging and Presence Protocol) se usa para la mensajería
-  instantánea, así como para las llamadas de voz y vídeo. El desarrollo del protocolo fue
-  iniciado por \textbf{Jeremie Miller} en el 1998, continuado por la comunidad de código abierto Jabber, que dio
-  nombre al proyecto, y finalmente formalizado en 2002 por la IETF.\\
+  El protocolo XMPP (Extensible Messaging and Presence Protocol) se usa para la 
+  mensajería instantánea, así como para las llamadas de voz y vídeo. El desarrollo
+  del protocolo fue iniciado por \textbf{Jeremie Miller} en el 1998, continuado 
+  por la comunidad de código abierto Jabber, que dio nombre al proyecto, y finalmente
+  formalizado en 2002 por la IETF.\\
+  
   \begin{wrapfigure}{r}{4cm}
   \includegraphics[width=4cm]{logo.png}
   \end{wrapfigure}
-  En 2004 se publicaron los RFCs del protocolo (RFC 3920, RFC 3921, RFC 3922, RFC 3923). Han vuelto a ser actualizados en 2011, y, aunque
-  la base del protocolo continúa estable, la \textbf{XMPP Standards Foundation} sigue definiendo extensiones
-  al protocolo.
   
-  Ha sido adoptado por empresas como Facebook, Tuenti, Whatsapp y Nimbuzz, para su servicio de chat. Asimismo, Google
-  también lo adoptó temporalmente en Google Talk, pero lo abandonó en detrimento de su propio protocolo Hangouts.
+  En 2004 se publicaron los RFCs del protocolo (\texttt{RFC 3920, RFC 3921, RFC
+  3922, RFC 3923}). Han vuelto a ser actualizados en 2011, y, aunque la base 
+  del protocolo continúa estable,la \textbf{XMPP Standards Foundation} sigue 
+  definiendo extensiones al protocolo.
+  
+  Ha sido adoptado por empresas como Facebook, Tuenti, Whatsapp y Nimbuzz, para
+  su servicio de chat. También Google lo adoptó temporalmente en Google 
+  Talk, pero lo abandonó en detrimento de su propio protocolo Hangouts.
 
-  En 2003 el protocolo era usado por aproximadamente 10 millones de personas, de acuerdo a los datos de la \textbf{XMPP
-  Standards Foundation}	
+  En 2003 el protocolo era usado por aproximadamente 10 millones de personas,
+  de acuerdo a los datos de la \textbf{XMPP Standards Foundation}.
    
    \subsection{Ventajas}
    \begin{itemize}
      \item \textbf{Descentralización}\\
-     La arquitectura de la red XMPP es similar a la de la red email. Cualquiera puede tener su propio servidor XMPP, y
-     no existe servidor central
+     La arquitectura de la red XMPP es similar a la de la red email. Cualquiera
+     puede tener su propio servidor XMPP, y no existe servidor central.
+     
      \item \textbf{Estándar abierto}\\
-     La IETF ha formalizado en los RFCS 6120 y 6121 XMPP como un protocolo de mensajería instantánea para el que no es
-     necesaria ninguna clase de privilegio para implementar soporte de sus especificaciones. Además su desarrollo no está ligado
-     a una única compañía.
+     La IETF ha formalizado en los RFCS 6120 y 6121 XMPP como un protocolo de 
+     mensajería instantánea para el que no es necesaria ninguna clase de privilegio
+     para implementar soporte de sus especificaciones. Además su desarrollo no 
+     está ligado a una única compañía.
+     
      \item \textbf{Seguridad}\\
-     Se trata de un protocolo evolucionado y mejorado desde que se creó en 1999. Los servidores XMPP pueden ser aislados
-     de la red pública XMPP y los núcleos de las especificaciones XMPP son capaces de proporcionar una alta seguridad
+     Se trata de un protocolo evolucionado y mejorado desde que se creó en 1999. 
+     Los servidores XMPP pueden ser aislados de la red pública XMPP y los núcleos
+     de las especificaciones XMPP son capaces de proporcionar una alta seguridad
      a través de SASL y TLS.
      
-     Cabe destacar que existen múltiples implementaciones del estándar para clientes, servidores, y librerías de código.
+     % ¿? No sé si es mejor sacar esto fuera.
+     Cabe destacar que existen múltiples implementaciones del estándar para clientes,
+     servidores, y librerías de código.
+     
      \item \textbf{Flexibilidad}\\
-     Las aplicaciones XMPP, más allá de la mensajería instantánea, incluyen funcionalidades como, entre otras: chat de grupo, 
-     herramientas colaborativas, compartición de archivos, control de sistemas remotos, geolocalización, VoIP, \ldots
+     Las aplicaciones XMPP, más allá de la mensajería instantánea, incluyen funcionalidades
+     como, entre otras: chat de grupo, herramientas colaborativas, compartición de archivos, 
+     control de sistemas remotos, geolocalización o VoIP.
    \end{itemize}
  
    \subsection{Desventajas}
@@ -253,16 +266,19 @@ El protocolo XMPP} % Subtitle
     \item \textbf{Carece de soporte QoS (Quality of service)}\\
     La garantía de entrega de mensajes debe construirse por encima de la capa XMPP.
     % ? Normally, this is done using simple sequence number attributes in stanzas.
+    
     \item \textbf{Redundancia}\\
-    Alrededor del 70\% del tráfico entre servidores son datos de presencia, siendo el 60\% de estos transmisiones 
-    redundantes.
+    Alrededor del 70\% del tráfico entre servidores son datos de presencia, siendo el 
+    60\% de estos transmisiones redundantes.
+    
     \item \textbf{Escalabilidad}\\
-    XMPP adolece del mismo problema de redundancia en sus servicios de chatroom y suscripción. Actualmente se está
-    trabajando en su solución.
+    XMPP adolece del mismo problema de redundancia en sus servicios de chatroom y 
+    suscripción. Actualmente se está trabajando en su solución.
+    
     \item \textbf{Ausencia de datos binarios}\\
-    Al estar basado en XML (transmisión de datos vía texto), la sobrecarga de la red es mayor en comparación 
-    con otros protocolos binarios. Este problema ha sido atajado por el \textit{Efficient XML Interchange (EXI) Format},
-    en el que XML es fragmentado de forma binaria.
+    Al estar basado en XML (transmisión de datos vía texto), la sobrecarga de la red es
+    mayor en comparación con otros protocolos binarios. Este problema ha sido atajado por 
+    el \textit{Efficient XML Interchange (EXI) Format}, en el que XML es fragmentado de forma binaria.
     
     Ahora bien, como los datos binarios deben ser codificados en base64 antes de transmitirse de manera in-band,
     cualquier cantidad considerable de datos binarios (transferencia de archivos) debe ser transmitida out-of-band,
@@ -277,7 +293,6 @@ El protocolo XMPP} % Subtitle
   de una conexión prolongada, normalmente TCP, en el puerto 5222, mediante el intercambio de XML stanzas. Y la información 
   que se envía sobre XMPP va contenida en un streaming de objetos XML. Cuando la comunicación es servidor-servidor la 
   conexión se realiza típicamente a través del puerto 5269, mediante protocolo TCP.  
-  
   
   \subsection{Jabber ID y servidores}
     Todo usuario de una red XMPP posee un único Jabber ID (JID), que está estructurado como una dirección email, es decir, 
@@ -312,6 +327,7 @@ El protocolo XMPP} % Subtitle
     
     %? The means to route messages based on a logical endpoint identifier - the JID, instead of by an explicit IP Address 
     % present opportunities to use XMPP as an Overlay network implementation on top of different underlay networks.
+    
   \subsection{XML Stanzas}
     Un cliente y un servidor de XMPP, tras terminar la conexión y la negociación de seguridad,
     pasan a enviarse XML Stanzas, la máxima unidad semántica dentro de \texttt{<stream>} que deben procesar.
@@ -321,80 +337,84 @@ El protocolo XMPP} % Subtitle
     El protocolo XMPP usa tres tipos de stanzas, que se describen a continuación: \texttt{<message>}, \texttt{<presence>}
     e \texttt{<iq>}.
   
-  \subsection{Tipo de mensajes}
-    En los mensajes se puede incluir, aunque no es obligatorio, un atributo que indique el tipo, con objetivo de poder
-    presentar las comunicaciones de forma más amigable al usuario, por ejemplo, en un GUI. Si se incluye dicho tipo, debe
-    tener uno de los siguientes valores:
-    \begin{itemize}
-     \item \texttt{chat} El mensaje está enviado en un contexto de conversación uno a uno.
-     \item \texttt{error} Un error ha ocurrido en relación a un mensaje previo enviado por el sender.
-     \item \texttt{groupchat} Mensaje enviado en el contexto de una conversación multiusuario.
-     \item \texttt{headline} El mensaje está generado por un servicio automático que entrega contenido RSS, noticias, 
-     deportes, \ldots. No se espera respuesta por parte del receptor.
-     \item \texttt{normal} Mensaje enviado en un contexto distinto a conversación uno a uno o multiusuario, que espera
-     respuesta por parte del receptor.
-    \end{itemize}
-    Una aplicación IM debería poder soportar todos estos tipos de mensajes. Si la aplicación recibe un mensaje sin tipificar,
-    debe considerar por defecto el tipo \texttt{normal}  
-  
-  \subsection{Elementos de un mensaje}
-    Los mensajes pueden contener elementos como:
-    \begin{enumerate}
-     \item \texttt{<subject/>}\\
-     Contiene caracteres XML human-readable. Especifica el tópico del mensaje. No debe contener atributos, con excepción
-     del \texttt{xml:lang}
-     \item \texttt{<body/>}
-     Contiene XML human-readable. Especifica el contenido del mensaje. No debe contener atributos, con excepción
-     del \texttt{xml:lang}
-     \item \texttt{<thread/>}
-     Contiene XML no human-readable, indicando un identificador para rastrear un thread de conversación (una sesión de
-     mensajería instantánea) entre dos entidades. Su valor es generado por el emisor, y debe ser incluido en todas 
-     las respuestas. Si se usa, debe ser único a lo largo de una conversación.
-    \end{enumerate}
-
-  \subsection{Presencia}
-    Se usan, ya sea por \texttt{jabber:client} o \texttt{jabber:server} para expresar la disponibilidad en red en un
-    determinado momento de una entidad. Aunque conocer la disponibilidad de una entidad no es estrictamente
-    necesario para el intercambio de mensajes XMPP, sí que facilita la interacción en tiempo real. Se indica 
-    mediante \texttt{<presence/>}. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
-    \begin{itemize}
-     \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación
-     \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario %???????
-     \item \texttt{subscribed} El emisor ha permitido al receptor recibir su presencia.
-     \item \texttt{unsubscribe} El emisor se está desvinculando de la presencia de una entidad.
-     \item \texttt{unsubscribed} La petición de suscripción ha sido rachazada o se ha cancelado una suscripción
-     \item \texttt{probe} Petición de la presencia de una entidad
-     \item \texttt{error} Relacionado con el proceso de envio de una presencia
-    \end{itemize}
+    \subsubsection{Tipos de mensajes}
+      En los mensajes se puede incluir, aunque no es obligatorio, un atributo que indique el tipo, con objetivo de poder
+      presentar las comunicaciones de forma más amigable al usuario, por ejemplo, en un GUI. Si se incluye dicho tipo, debe
+      tener uno de los siguientes valores:
+      
+      \begin{itemize}
+	\item \texttt{chat} El mensaje está enviado en un contexto de conversación uno a uno.
+	\item \texttt{error} Un error ha ocurrido en relación a un mensaje previo enviado por el sender.
+	\item \texttt{groupchat} Mensaje enviado en el contexto de una conversación multiusuario.
+	\item \texttt{headline} El mensaje está generado por un servicio automático que entrega contenido RSS, noticias, 
+	  deportes, \ldots. No se espera respuesta por parte del receptor.
+	\item \texttt{normal} Mensaje enviado en un contexto distinto a conversación uno a uno o multiusuario, que espera
+	  respuesta por parte del receptor.
+      \end{itemize}
+      
+      Una aplicación IM debería poder soportar todos estos tipos de mensajes. Si la aplicación recibe un mensaje sin tipificar,
+      debe considerar por defecto el tipo \texttt{normal}.
     
-    Además,la presencia puede incluir los elementos:
-    \begin{enumerate}
-     \item \texttt{<show/>}\\
-     A su vez, puede tomar los valores:
-     \begin{itemize}
-      \item \texttt{away} 
-      \item \texttt{chat} La entidad está activa
-      \item \texttt{dnd} (Do not disturb)
-      \item \texttt{xa} (Extended away) La entidad se encuentra ausente por un gran periodo de tiempo.
-     \end{itemize}
-     \item \texttt{<status/>}
-     Contiene XML human-readable, especificando disponibilidad, y se usa para complementar el valor de \texttt{<show/>}.
-     Por ejemplo: En una reunión.
-     \item \texttt{<priority/>}
-     Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
-     de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
-    \end{enumerate}
+    \subsubsection{Elementos de un mensaje}
+      Los mensajes pueden contener elementos como:
+      \begin{enumerate}
+	\item \texttt{<subject/>}\\
+	Contiene caracteres XML human-readable. Especifica el tópico del mensaje. No debe contener atributos, con excepción
+	del \texttt{xml:lang}.
+	
+	\item \texttt{<body/>}\\
+	Contiene XML human-readable. Especifica el contenido del mensaje. No debe contener atributos, con excepción
+	del \texttt{xml:lang}
+	
+	\item \texttt{<thread/>}\\
+	Contiene XML no human-readable, indicando un identificador para rastrear un thread de conversación (una sesión de
+	mensajería instantánea) entre dos entidades. Su valor es generado por el emisor, y debe ser incluido en todas 
+	las respuestas. Si se usa, debe ser único a lo largo de una conversación.
+      \end{enumerate}
 
-    Ejemplo de información de presencia:
-\begin{lstlisting}[language=XML]
-<presence xml:lang='en'>
-  <show>dnd</show>
-  <status>Wooing Juliet</status>
-  <status xml:lang='cz'>Ja dvo&#x0159;&#x00ED;m Juliet</status>
-</presence>
-\end{lstlisting}
-  \subsection{IQ}
-    Los fragmentos de comunicación IQ proporcionan un mecanismo de petición-respuesta estructurado.
+    \subsubsection{Presencia}
+      Se usan, ya sea por \texttt{jabber:client} o \texttt{jabber:server} para expresar la disponibilidad en red en un
+      determinado momento de una entidad. Aunque conocer la disponibilidad de una entidad no es estrictamente
+      necesario para el intercambio de mensajes XMPP, sí que facilita la interacción en tiempo real. Se indica 
+      mediante \texttt{<presence/>}. Puede tomar distintos tipos, aunque no es obligatorio indicar ninguno de ellos:
+      \begin{itemize}
+      \item \texttt{unavailable} Indica que la entidad deja de estar disponible para comunicación
+      \item \texttt{subscribe} El emisor desea suscribirse a la presencia del destinatario %???????
+      \item \texttt{subscribed} El emisor ha permitido al receptor recibir su presencia.
+      \item \texttt{unsubscribe} El emisor se está desvinculando de la presencia de una entidad.
+      \item \texttt{unsubscribed} La petición de suscripción ha sido rachazada o se ha cancelado una suscripción
+      \item \texttt{probe} Petición de la presencia de una entidad
+      \item \texttt{error} Relacionado con el proceso de envio de una presencia
+      \end{itemize}
+      
+      Además,la presencia puede incluir los elementos:
+      \begin{enumerate}
+      \item \texttt{<show/>}\\
+      A su vez, puede tomar los valores:
+      \begin{itemize}
+	\item \texttt{away} 
+	\item \texttt{chat} La entidad está activa
+	\item \texttt{dnd} (Do not disturb)
+	\item \texttt{xa} (Extended away) La entidad se encuentra ausente por un gran periodo de tiempo.
+      \end{itemize}
+      \item \texttt{<status/>}
+      Contiene XML human-readable, especificando disponibilidad, y se usa para complementar el valor de \texttt{<show/>}.
+      Por ejemplo: En una reunión.
+      \item \texttt{<priority/>}
+      Contiene un carácter XML no human-readable que representa un entero entre -128 y +127, y que indica el nivel
+      de prioridad de un recurso. Por defecto, si no está indicado, se considera a 0.
+      \end{enumerate}
+
+      Ejemplo de información de presencia:
+  \begin{lstlisting}[language=XML]
+  <presence xml:lang='en'>
+    <show>dnd</show>
+    <status>Wooing Juliet</status>
+    <status xml:lang='cz'>Ja dvo&#x0159;&#x00ED;m Juliet</status>
+  </presence>
+  \end{lstlisting}
+    \subsubsection{IQ}
+      Los fragmentos de comunicación IQ proporcionan un mecanismo de petición-respuesta estructurado.
   
   \subsection{Proceso de entrega de mensajes}
     La mayoría de ls aplicaciones XMPP están implementadas con una arquitectura cliente-servidor que requiere que un cliente
