@@ -665,34 +665,34 @@ El protocolo XMPP} % Subtitle
     \end{itemize}
 
 \section{XMPP y WhatsApp}
-WhatsApp es una aplicación de mensajería instantánea multiplataforma que posibilita el envío y la recepción de mensajes a 
-través de internet, disponible en los sistemas operativos iOS, Android, Windows Phone, BlackBerry OS y Symbian. Utiliza una
-versión propia/modificada de XMPP, llamada FunXMPP, dándose algunas diferencias entre el protocolo y su modificado, que
-describimos a continuación.
+  WhatsApp es una aplicación de mensajería instantánea multiplataforma que posibilita el envío y la recepción de mensajes a 
+  través de internet, disponible en los sistemas operativos iOS, Android, Windows Phone, BlackBerry OS y Symbian. Utiliza una
+  versión propia/modificada de XMPP, llamada FunXMPP, dándose algunas diferencias entre el protocolo y su modificado, que
+  describimos a continuación.
 
-\begin{enumerate}
- \item XMPP posibilita la transmisión de cualquier atributo del cliente, incluyendo namespaces, mientras que WhatsApp
-  permite únicamente dos: 'to' y 'resource' %stream:stream nodes????
- \item XMPP posibilita cualquier característica del Stream durante la comunicaión. WhatsApp sólo \texttt{<receipt\_acks />};
-  ni siquiera sasl
- \item En cuanto a los mecanismos SASL, XMPP permite cualquier, incluido DIGEST-MD5, mientras que WhatsApp sólo permite 
-  este último
- \item Cuando la petición SASL tiene éxito en una comunicación cliente-servidor XMPP, se abre un nuevo strem reemplazando al antiguo. En
-  En WhatsApp sin embargo, después de \texttt{<success />} el servidor no envía nada.
- \item En Whatsapp no existen los resources, ya que un usario sólo puede tener un log-in hecho, a diferencia de XMPP, en
-  el que se pueden tener varios log-ins desde distintos dispositivos.
- \item En WhatsApp el JID está compuesto de la forma:
-   \begin{center}
-    \texttt{número\_de\_teléfono@s.whatsapp.net}
-   \end{center}
-  Esto asegura que la cuenta creada pertenezca a un número de teléfono móvil, pero resta en privacidad en la medida
-  que el conocer el número telefónico de un individuo ya nos aporta su usuario de WhatsApp.
- \item Las palabras reservadas de usadas por XMPP tales como body, from, \ldots se codifican en FunXMPP mediante
-  una tabla Hash que las sustituye por un byte de la forma $\backslash$\texttt{nn} donde \texttt{nn} representa un número
-  hexadecimal.
-\end{enumerate}
+  \begin{enumerate}
+  %% ¿El sujeto aquí es Whatsapp o FunXMPP?
+    \item XMPP posibilita la transmisión de cualquier atributo del cliente, incluyendo namespaces, mientras que WhatsApp
+      permite únicamente dos: 'to' y 'resource'. %stream:stream nodes????
+    \item XMPP posibilita cualquier característica del Stream durante la comunicación. 
+      WhatsApp sólop posibilita \texttt{<receipt\_acks />}; ni siquiera SASL.
+    \item XMPP permite cualquier mecanismo SASL, incluyendo DIGEST-MD5. Mientras que FunXMPP sólo permite este último.
+    \item Cuando la petición SASL tiene éxito en una comunicación cliente-servidor XMPP, se abre un nuevo strem reemplazando al antiguo.
+      En WhatsApp, sin embargo, después de \texttt{<success />} el servidor no envía nada.
+    \item En Whatsapp no existen los resources, ya que un usario sólo puede tener un log-in hecho; a diferencia de XMPP, en
+      el que se pueden tener varios log-ins desde distintos dispositivos.
+    \item En WhatsApp el JID está compuesto de la forma:
+      \begin{center}
+	\texttt{número\_de\_teléfono@s.whatsapp.net}
+      \end{center}
+      Esto asegura que la cuenta creada pertenezca a un número de teléfono móvil, pero resta en privacidad en la medida
+      que el conocer el número telefónico de un individuo ya nos aporta su usuario de WhatsApp.
+    \item Las palabras reservadas de usadas por XMPP tales como \texttt{body} o \texttt{from} se codifican en FunXMPP mediante
+      una tabla Hash que las sustituye por un byte de la forma $\backslash$\texttt{nn} donde \texttt{nn} representa un número
+      hexadecimal.
+  \end{enumerate}
 
-Un ejemplo de mensaje real decodificado podría ser:
+  Un ejemplo de mensaje real decodificado podría ser:
 
 \begin{lstlisting}[language=XML] 
  <\to="s.whatsapp.net" resource="iPhone-2.10.2-5222" />
@@ -707,7 +707,8 @@ Un ejemplo de mensaje real decodificado podría ser:
   xmlns="urn:ietf:params:xml:ns:xmpp-sasl" />
 \end{lstlisting}
 
-donde con la equivalencia hash sería algo así:
+  donde con la equivalencia hash sería algo así:
+
 \begin{lstlisting}[language=XML] 
  <\x01 \xc8=\xab \xa5="iPhone-2.10.2-5222" />
  <\xbb>
@@ -721,77 +722,80 @@ donde con la equivalencia hash sería algo así:
   \xe8=\xcf />
 \end{lstlisting}
 
-Las conexiones en WhatsApp comienzan siempre con la identificación de la versión del protocolo que se emplea (p.e. 
-WhatsApp 1.2). Se solicita conexión a los servidores de la aplicación \texttt{s.whatsapp.net} y se realiza el intercambio
-de características soportadas por el dispositivo y la vesión ejecutada de WhatsApp.
+  Las conexiones en WhatsApp comienzan siempre con la identificación de la versión del protocolo que se emplea (p.e. 
+  WhatsApp 1.2). Se solicita conexión a los servidores de la aplicación \texttt{s.whatsapp.net} y se realiza el intercambio
+  de características soportadas por el dispositivo y la vesión ejecutada de WhatsApp.
 
-Finalmente se elige el mecanismo de autenticación (WAUTH-1) mediante SASL, indicando como JID el número de teléfono.
-SASL es un framework de autenticación y autorización en protocolos de internet, que permite separra los mecanismos de
-autenticación (en este caso WAUTH-1) de los protocolos de las aplicaciones en sí.
+  Finalmente se elige el mecanismo de autenticación (WAUTH-1) mediante SASL, indicando como JID el número de teléfono.
+  SASL es un framework de autenticación y autorización en protocolos de internet, que permite separar los mecanismos de
+  autenticación (en este caso WAUTH-1) de los protocolos de las aplicaciones en sí.
 
-A pesar de las diferencias entre XMPP y FunXMPP, éste último sigue las especificaciones de XMPP en el envío de la
-mayoría de mensajes (inicios de stream, presencia, \ldots)
+  A pesar de las diferencias entre XMPP y FunXMPP, éste último sigue las especificaciones de XMPP en el envío de la
+  mayoría de mensajes (inicios de stream, presencia, \ldots)
 
-\subsection{Autenticación WAUTH-1 y WAUTH-2}
-Inicialmente, el password era el resultado de una función hash MD5 sobre la dirección MAC en los iOS, y el IMEI para
-móviles Android, Windows Phone y Symbian.
-Debido a los agujeros de seguridad que surgieron y que fueron aprovechados por ataques como \texttt{Espía WhatsApp},
-MD5 dejó de usarse a partir del 24 de diciembre de 2012, lo que dio paso a WAUTH-1 y WAUTH-2
+  \subsection{Autenticación WAUTH-1 y WAUTH-2}
+    Inicialmente, el password era el resultado de una función hash MD5 sobre la dirección MAC en los iOS, y el IMEI para
+    móviles Android, Windows Phone y Symbian.
+    Debido a los agujeros de seguridad que surgieron y que fueron aprovechados por ataques como \texttt{Espía WhatsApp}, %% (?) ¿Es nombre del ataque o del software?
+    MD5 dejó de usarse a partir del 24 de diciembre de 2012, lo que dio paso a WAUTH-1 y WAUTH-2.
 
-\subsubsection{WAUTH-1}
-Cuando se registra el teléfono en la aplicación(vía HTTPS), se genera un password en los servidores de WhatsApp que será compartido
-entre el teléfono y los servidores.
+    \subsubsection{WAUTH-1}
+      Cuando se registra el teléfono en la aplicación (vía HTTPS), se genera un password en los servidores
+      de WhatsApp que será compartido entre el teléfono y los servidores.
 
-Cuando el teléfono trata de logearse en WhatsApp los ser servidores le envían un desafío (\texttt{<challenge>} de 20B, que junto con el
-password generan las claves RC4 y HMAC de la sesión. 
+      Cuando el teléfono trata de logearse en WhatsApp los ser servidores le envían un desafío 
+      (\texttt{<challenge>} de 20B, que junto con el password generan las claves RC4 y HMAC de la sesión. 
 
-Para acceder al sistema, el teléfono enviará:
-\begin{lstlisting}[language=XML]
- <auth xmlns="urn:ietf:params:xml:ns:xmpp_sasl" user="XXXXXXXXXXXX"
- mechanism="AUTH-1" />
-\end{lstlisting}
+      Para acceder al sistema, el teléfono enviará:
+      \begin{lstlisting}[language=XML]
+  <auth xmlns="urn:ietf:params:xml:ns:xmpp_sasl" user="XXXXXXXXXXXX"
+  mechanism="AUTH-1" />
+      \end{lstlisting}
 
-El servidor responderá al terminal con un desafío de 20 bytes:
-\begin{lstlisting}[language=XML]
- <challenge xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">YYYYYYYYYYYYYYYYYYYY
- </challenge>
-\end{lstlisting}
+      El servidor responderá al terminal con un desafío de 20 bytes:
+      \begin{lstlisting}[language=XML]
+  <challenge xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">YYYYYYYYYYYYYYYYYYYY
+  </challenge>
+      \end{lstlisting}
 
-Las claves RC4(para cifrar la comunicación) y HMAC(para validar la integridad de los mensajes) son el resultado 
-de iterar PKBDF2 16 veces, con el password, el challenge como salt y SHA1 como función de hash. Los 20 bytes más
-significativos del tipo \texttt{<numero teléfono> || <20 bytes de respuesta> || timestamp} son usados como clave
-RC4 y HMAC-SHA1 durante la sesión de comunicación teléfono-servidor.
+      Las claves RC4 (para cifrar la comunicación) y HMAC (para validar la integridad de los mensajes) son el resultado 
+      de iterar PKBDF2 16 veces, con el password, el challenge como salt y SHA1 como función de hash. Los 20 bytes más
+      significativos del tipo \texttt{<numero teléfono> || <20 bytes de respuesta> || timestamp} son usados como clave
+      RC4 y HMAC-SHA1 durante la sesión de comunicación teléfono-servidor.
 
-\begin{lstlisting}[language=XML]
- <reponse xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">ZZZZZZZZZZZZZ</reponse>
-\end{lstlisting}
+      \begin{lstlisting}[language=XML]
+  <reponse xmlns="urn:ietf:paramsxml:ns:xmpp-sasl">ZZZZZZZZZZZZZ</reponse>
+      \end{lstlisting}
 
-A partir de este momento los mensajes van cifrados.
+      A partir de este momento los mensajes van cifrados.
 
-Como el algoritmo de cifrado RC4 usa el mismo password tanto para los mensajes cliente-servidor como servidor-cliente,
-esto suponía una vulnerabilidad aprovechable para revelar conversaciones de Whatsapp, por lo que se migró al protocolo
-de autenticación WAUTH-2.
-    \begin{center}
-      \includegraphics[width=13cm]{wauth-1.jpg}
-    \end{center}
-\subsubsection{WAUTH-2}
-Lo que cambia de WAUTH-2 respecto a WAUTH-1 es que se emplea PKBDF2 cuatro veces en lugar de 1, para generar cuatro
-claves diferentes, empleando 2 iteraciones del algoritmo en lugar de 16, y se va concatenando en cada una de las
-cuatro veces un byte al desafío (la primera vez el byte 0x01, la segunda el 0x02, \ldots).
+      Como el algoritmo de cifrado RC4 usa el mismo password tanto para los mensajes cliente-servidor como servidor-cliente,
+      esto suponía una vulnerabilidad aprovechable para revelar conversaciones de Whatsapp, por lo que se migró al protocolo
+      de autenticación WAUTH-2.
+      
+      \begin{center}
+	\includegraphics[width=13cm]{wauth-1.jpg}
+      \end{center}
+      
+      
+    \subsubsection{WAUTH-2}
+      Lo que cambia de WAUTH-2 respecto a WAUTH-1 es que se emplea PKBDF2 cuatro veces en lugar de 1, para generar cuatro
+      claves diferentes, empleando 2 iteraciones del algoritmo en lugar de 16, y se va concatenando en cada una de las
+      cuatro veces un byte al desafío (la primera vez el byte 0x01, la segunda el 0x02, \ldots).
 
-De las cuatro claves, dos son para la sesión del teléfono y otras dos para la sesión del servidor.
-\begin{enumerate}
- \item La primera se emplea para cifrar y descifrar mediante RC4 las conversaciones del teléfono hacia los servidores
-  WhatsApp
- \item La segunda se usa para validar la integridad de los mensajes enviados desde el teléfono a los servidores.
- \item La tercera se emplea para cifrar y descifrar mediante RC4 las conversaciones desde los servidores hacia el 
-  teléfono.
- \item La cuarta se utiliza para validar la integridad de los mensajes enviados desde los servidores al teléfono.
-\end{enumerate}
+      De las cuatro claves, dos son para la sesión del teléfono y otras dos para la sesión del servidor.
+      \begin{enumerate}
+	\item La primera se emplea para cifrar y descifrar mediante RC4 las conversaciones del teléfono hacia los servidores
+	  WhatsApp.
+	\item La segunda se usa para validar la integridad de los mensajes enviados desde el teléfono a los servidores.
+	\item La tercera se emplea para cifrar y descifrar mediante RC4 las conversaciones desde los servidores hacia el 
+	  teléfono.
+	\item La cuarta se utiliza para validar la integridad de los mensajes enviados desde los servidores al teléfono.
+      \end{enumerate}
 
-Otro aspecto que difiere es que antes de calcular el HMAC-SHA1 se concatenan cuatro bytes al final del mensaje indicando
-el número del mismo (por ejemplo, se concatenaría 0x00000003 si  el mensaje que vamos a enviar es el tercero, antes
-de calcularle el HMAC-SHA1).
+      Otro aspecto que difiere es que antes de calcular el HMAC-SHA1 se concatenan cuatro bytes al final del mensaje indicando
+      el número del mismo (por ejemplo, se concatenaría \texttt{0x00000003} si el mensaje que vamos a enviar es el tercero, antes
+      de calcularle el HMAC-SHA1).
 
 %% ------ Bibliografía ------------------------------------------------------
 \vfill
