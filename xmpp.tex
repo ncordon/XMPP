@@ -688,7 +688,7 @@ El protocolo XMPP} % Subtitle
       \end{center}
       Esto asegura que la cuenta creada pertenezca a un número de teléfono móvil, pero resta en privacidad en la medida
       que el conocer el número telefónico de un individuo ya nos aporta su usuario de WhatsApp.
-    \item Las palabras reservadas de usadas por XMPP tales como \texttt{body} o \texttt{from} se codifican en FunXMPP mediante
+    \item Las palabras reservadas usadas por XMPP tales como \texttt{body} o \texttt{from} se codifican en FunXMPP mediante
       una tabla Hash que las sustituye por un byte de la forma $\backslash$\texttt{nn} donde \texttt{nn} representa un número
       hexadecimal.
   \end{enumerate}
@@ -725,7 +725,7 @@ El protocolo XMPP} % Subtitle
 
   Las conexiones en WhatsApp comienzan siempre con la identificación de la versión del protocolo que se emplea (p.e. 
   WhatsApp 1.2). Se solicita conexión a los servidores de la aplicación \texttt{s.whatsapp.net} y se realiza el intercambio
-  de características soportadas por el dispositivo y la vesión ejecutada de WhatsApp.
+  de características soportadas por el dispositivo y la versión ejecutada de WhatsApp.
 
   Finalmente se elige el mecanismo de autenticación (WAUTH-1) mediante SASL, indicando como JID el número de teléfono.
   SASL es un framework de autenticación y autorización en protocolos de internet, que permite separar los mecanismos de
@@ -737,7 +737,7 @@ El protocolo XMPP} % Subtitle
   \subsection{Autenticación WAUTH-1 y WAUTH-2}
     Inicialmente, el password era el resultado de una función hash MD5 sobre la dirección MAC en los iOS, y el IMEI para
     móviles Android, Windows Phone y Symbian.
-    Debido a los agujeros de seguridad que surgieron y que fueron aprovechados por ataques como \texttt{Espía WhatsApp}, %% (?) ¿Es nombre del ataque o del software?
+    Debido a los agujeros de seguridad que surgieron y que fueron aprovechados por ataques como \textit{Espía WhatsApp}, %% (?) ¿Es nombre del ataque o del software?
     MD5 dejó de usarse a partir del 24 de diciembre de 2012, lo que dio paso a WAUTH-1 y WAUTH-2.
 
     \subsubsection{WAUTH-1}
