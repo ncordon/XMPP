@@ -314,7 +314,7 @@ El protocolo XMPP} % Subtitle
      seridor debe asegurarse de que el cliente se identifica antes de proporcionarle acceso a la red XMPP.
      \item Intercambiar XML streams con otros servidores, y enviar XML stanzas a dichos servidores de acuerdo a la política
      de comunicación que sigan cada uno.
-     \item Almacenar datos usada por los clientes (listas de contactos, información de presencia, \ldots). Esto es una
+     \item Almacenar datos usados por los clientes (listas de contactos, información de presencia, \ldots). Esto es una
      responsabilidad secundaria.
      \item Hacer de hosting a servicios añadidos al XMPP como la conferencia multi-usuario.
     \end{itemize}
@@ -676,7 +676,7 @@ El protocolo XMPP} % Subtitle
     \item XMPP posibilita la transmisión de cualquier atributo del cliente, incluyendo namespaces, mientras que WhatsApp
       permite únicamente dos: 'to' y 'resource'. %stream:stream nodes????
     \item XMPP posibilita cualquier característica del Stream durante la comunicación. 
-      WhatsApp sólop posibilita \texttt{<receipt\_acks />}; ni siquiera SASL.
+      WhatsApp sólo posibilita \texttt{<receipt\_acks />}; ni siquiera SASL.
     \item XMPP permite cualquier mecanismo SASL, incluyendo DIGEST-MD5. Mientras que FunXMPP sólo permite este último.
     \item Cuando la petición SASL tiene éxito en una comunicación cliente-servidor XMPP, se abre un nuevo strem reemplazando al antiguo.
       En WhatsApp, sin embargo, después de \texttt{<success />} el servidor no envía nada.
@@ -744,8 +744,8 @@ El protocolo XMPP} % Subtitle
       Cuando se registra el teléfono en la aplicación (vía HTTPS), se genera un password en los servidores
       de WhatsApp que será compartido entre el teléfono y los servidores.
 
-      Cuando el teléfono trata de logearse en WhatsApp los ser servidores le envían un desafío 
-      (\texttt{<challenge>} de 20B, que junto con el password generan las claves RC4 y HMAC de la sesión. 
+      Cuando el teléfono trata de logearse en WhatsApp los servidores le envían un desafío 
+      (\texttt{<challenge>}) de 20B, que junto con el password generan las claves RC4 y HMAC de la sesión. 
 
       Para acceder al sistema, el teléfono enviará:
       \begin{lstlisting}[language=XML]
